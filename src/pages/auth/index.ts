@@ -1,0 +1,1 @@
+export { LogRegPage } from './ui/LogRegPage';
