@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="280" height="280" fill="none">
+  <!-- Soft mint background -->
+  <circle cx="140" cy="140" r="112" fill="#E5F8F2"/>
+
+  <!-- Small accent marks -->
+  <g stroke="#07966D" stroke-width="7" stroke-linecap="round">
+    <path d="M34 105 L18 92"/>
+    <path d="M27 140 H8"/>
+    <path d="M35 174 L20 188"/>
+  </g>
+
+  <!-- Paper with a folded corner -->
+  <path d="M76 57 L164 42 L209 81 L228 191 Q230 207 214 210 L91 231 Q76 233 73 217 L55 79 Q53 62 76 57Z"
+        fill="#FFFFFF" stroke="#C7E5DE" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M164 43 L171 72 Q174 87 190 84 L209 81Z" fill="#B9E4D9"/>
+
+  <!-- Sad face -->
+  <g fill="#07966D">
+    <circle cx="111" cy="133" r="7"/>
+    <circle cx="154" cy="126" r="7"/>
+  </g>
+  <path d="M111 169 Q133 139 159 160" stroke="#07966D" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Error badge -->
+  <circle cx="205" cy="190" r="39" fill="#07966D"/>
+  <path d="M192 177 L218 203 M218 177 L192 203" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+</svg>

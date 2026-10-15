@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="280" height="280" fill="none">
+  <!-- Soft mint background -->
+  <circle cx="140" cy="140" r="112" fill="#E5F8F2"/>
+
+  <!-- Accent rays -->
+  <g stroke="#07966D" stroke-width="7" stroke-linecap="round">
+    <path d="M34 105 L18 92"/>
+    <path d="M27 140 H8"/>
+    <path d="M35 174 L20 188"/>
+  </g>
+
+  <!-- Paper with folded corner -->
+  <path d="M76 57 L164 42 L209 81 L228 191 Q230 207 214 210 L91 231 Q76 233 73 217 L55 79 Q53 62 76 57Z"
+        fill="#FFFFFF" stroke="#C7E5DE" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M164 43 L171 72 Q174 87 190 84 L209 81Z" fill="#B9E4D9"/>
+
+  <!-- Padlock -->
+  <path d="M111 120 V102 A23 23 0 0 1 157 102 V120"
+        stroke="#07966D" stroke-width="10" stroke-linecap="round"/>
+  <rect x="99" y="113" width="76" height="67" rx="11" fill="#07966D" transform="rotate(-5 137 146)"/>
+  <circle cx="137" cy="139" r="9" fill="#FFFFFF"/>
+  <path d="M134 146 L131 160 Q130 164 134 164 H141 Q145 164 144 160 L141 146Z" fill="#FFFFFF"/>
+
+  <!-- Access denied badge -->
+  <circle cx="205" cy="190" r="39" fill="#07966D"/>
+  <circle cx="205" cy="190" r="24" stroke="#FFFFFF" stroke-width="7"/>
+  <path d="M188 173 L222 207" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
+</svg>
