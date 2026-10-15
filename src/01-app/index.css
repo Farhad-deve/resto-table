@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --breakpoint-xs: 36em; /* 576px */
+    --breakpoint-sm: 48em; /* 768px */
+    --breakpoint-md: 62em; /* 992px */
+    --breakpoint-lg: 75em; /* 1200px */
+    --breakpoint-xl: 88em; /* 1408px */
+    --breakpoint-2xl: 100em; /* 1600px */
+}
+
+::selection {
+    color: #fff;
+    background-color: #12b886;
+}

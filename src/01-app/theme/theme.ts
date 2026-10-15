@@ -1,0 +1,27 @@
+import { Burger, createTheme } from "@mantine/core";
+
+export const theme = createTheme({
+    primaryColor: "teal",
+    fontFamily: "Onest, sans-serif",
+    headings: {
+        fontWeight: "600",
+        sizes: {
+            h1: { fontSize: "1.5rem" },
+            h2: { fontSize: "1.375rem" },
+            h3: { fontSize: "1rem" }
+        }
+    },
+    radius: {
+        xs: "0.25rem",
+        sm: "0.5rem",
+        md: "12px",
+        lg: "16px",
+    },
+    components: {
+        Burger: Burger.extend({
+            styles: {
+                
+            }
+        })
+    }
+})
