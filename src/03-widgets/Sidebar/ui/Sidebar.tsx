@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Avatar,
   Box,
   Group,
@@ -7,26 +6,23 @@ import {
   Stack,
   Text,
 } from "@mantine/core";
-import { LogOut, Store } from "lucide-react";
+import { Globe,  ShelvingUnit, Store } from "lucide-react";
 import {
   RestaurantAdminLinks,
   StoreKeeperLinks,
   SuperAdminLinks,
 } from "../config/LinksData";
 import { SidebarLink } from "./SidebarLink";
-import { useLogout } from "@/04-features/auth";
+import { LogoutButton} from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
+import { ProfileButton } from "@/06-shared/ui/ProfileButton";
 
 interface SidebarProps {
   collapsed: boolean;
   inActiveRestaurantsCount?: number;
 }
 
-export const Sidebar = ({
-  inActiveRestaurantsCount,
-  collapsed,
-}: SidebarProps) => {
-  const { mutate: logout, isPending: isLogoutPending } = useLogout();
+export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) => {
   const { data: user, isPending: isUserPending } = useMe();
 
   const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
@@ -69,7 +65,13 @@ export const Sidebar = ({
                 hidden={collapsed}
               >
                 <Box bg={"gray.1"} c={"gray.5"} p={8} bdrs={"sm"}>
-                  <Store size={14} />
+                  {user?.role === "superadmin" ? (
+                    <Globe size={14} />
+                  ) : user?.role === "restaurant_admin" ? (
+                    <Store size={14} />
+                  ) : (
+                    <ShelvingUnit size={14} />
+                  )}
                 </Box>
 
                 <Stack gap={0}>
@@ -176,63 +178,14 @@ export const Sidebar = ({
             <Avatar color="teal.8" className="cursor-pointer">
               <Text c={"white"} size="sm" fw={600}>
                 {user?.first_name.charAt(0).toUpperCase()}
-              </Text>
-              <Text c={"white"} size="sm" fw={600}>
                 {user?.last_name.charAt(0).toUpperCase()}
               </Text>
             </Avatar>
 
-            <ActionIcon
-              variant="transparent"
-              color="#868E96"
-              onClick={() => logout()}
-              loading={isLogoutPending}
-            >
-              <LogOut size={16} />
-            </ActionIcon>
+            <LogoutButton />
           </Stack>
         ) : (
-          <Group
-            className={`border-t border-[#E9ECEF] pt-2`}
-            justify="space-between"
-          >
-            <Group
-              gap={12}
-              className="hover:bg-black/5 flex-1 cursor-pointer py-2 px-1 rounded-lg"
-            >
-              <Avatar color="teal.8" size={"2.2rem"}>
-                <Text c={"white"} size="sm" fw={600}>
-                  {user?.first_name.charAt(0).toUpperCase()}
-                </Text>
-                <Text c={"white"} size="sm" fw={600}>
-                  {user?.last_name.charAt(0).toUpperCase()}
-                </Text>
-              </Avatar>
-
-              <Stack gap={0}>
-                <Text size="sm" fw={600}>
-                  {user?.first_name} {user?.last_name}
-                </Text>
-                <Text size="xs" c={"gray.6"}>
-                  {user?.role === "superadmin"
-                    ? "Суперадминистратор"
-                    : user?.role === "restaurant_admin"
-                      ? "Администратор"
-                      : "Склад"}
-                  {/* Платформа | Администратор | Склад */}
-                </Text>
-              </Stack>
-            </Group>
-
-            <ActionIcon
-              variant="transparent"
-              color="#868E96"
-              onClick={() => logout()}
-              loading={isLogoutPending}
-            >
-              <LogOut size={16} />
-            </ActionIcon>
-          </Group>
+          <ProfileButton user={user} rightSection={<LogoutButton />} />
         )}
       </Stack>
     </div>

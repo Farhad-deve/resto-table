@@ -1,7 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import App from "../App";
 import { LogRegPage } from "@/02-pages/auth";
-import { AdminPanelLayout } from "../layouts";
+import { AdminPanelLayout, CustomerLayout, KitchenLayout, WaiterLayout } from "../layouts";
 import { SuperAdminRestaurantsPage } from "@/02-pages/superAdmin";
 import { SuperAdminAdminsPage } from "@/02-pages/superAdmin";
 import { LoginGuard } from "./guards/LoginGuard";
@@ -145,6 +145,39 @@ export const router = createBrowserRouter([
             ],
           },
         ],
+      },
+
+      // Waiter
+      {
+        element: <RoleGuard allowedRoles={["waiter"]} />,
+        children: [
+          {
+            path: "waiter",
+            element: <WaiterLayout />,
+          }
+        ]
+      },
+
+      // Cook
+      {
+        element: <RoleGuard allowedRoles={["cook"]} />,
+        children: [
+          {
+            path: "kitchen",
+            element: <KitchenLayout />
+          }
+        ]
+      },
+
+      // Customer
+      {
+        element: <RoleGuard allowedRoles={["customer"]} />,
+        children: [
+          {
+            path: "customer",
+            element: <CustomerLayout />
+          }
+        ]
       },
 
       // Not found page

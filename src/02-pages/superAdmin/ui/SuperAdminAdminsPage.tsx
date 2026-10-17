@@ -5,5 +5,5 @@ export const SuperAdminAdminsPage = () => {
     <div>
       SuperAdminAdminsPage
     </div>
-  )
-}
+  );
+};

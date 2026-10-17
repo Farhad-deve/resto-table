@@ -16,12 +16,5 @@ export const theme = createTheme({
         sm: "0.5rem",
         md: "12px",
         lg: "16px",
-    },
-    components: {
-        Burger: Burger.extend({
-            styles: {
-                
-            }
-        })
     }
 })
