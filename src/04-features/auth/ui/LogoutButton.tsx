@@ -1,18 +1,28 @@
 import { ConfirmModal } from "@/06-shared/ui/ConfirmModal";
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { LogOut } from "lucide-react";
 import { useLogout } from "../model/useLogout";
 
-export const LogoutButton = () => {
+interface LogoutButtonProps {
+  logoutWithText?: boolean;
+}
+
+export const LogoutButton = ({ logoutWithText } : LogoutButtonProps) => {
   const [opened, { open, close }] = useDisclosure();
   const { mutate: logout, isPending: isLogoutPending } = useLogout();
 
   return (
     <>
-      <ActionIcon onClick={open} variant="transparent" color="#868E96" className="group">
-        <LogOut size={16} className="group-hover:text-red-500" />
-      </ActionIcon>
+      {logoutWithText ? (
+        <Button onClick={open} variant="outline" bdrs={"sm"} color="red" leftSection={<LogOut size={16} />}>
+          Выйти из аккаунта
+        </Button>
+      ) : (
+        <ActionIcon onClick={open} variant="transparent" color="#868E96" className="group">
+          <LogOut size={16} className="group-hover:text-red-500" />
+        </ActionIcon>
+      )}
 
       <ConfirmModal
         title="Выйти из аккаунта?"

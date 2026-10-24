@@ -16,7 +16,7 @@ interface ProfileButtonProps {
 export const ProfileButton = ({ user, rightSection }: ProfileButtonProps) => {
   return (
     <Group
-      className={`border-t border-[#E9ECEF] rounded-lg hover:bg-black/5`}
+      className={`rounded-lg hover:bg-black/5`}
       justify="space-between"
     >
       <Group gap={12} className="flex-1 cursor-pointer py-2 px-1">

@@ -1,4 +1,4 @@
-import { Button, Text, Title } from "@mantine/core";
+import { Button, Group, Text, Title } from "@mantine/core";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 
@@ -16,9 +16,11 @@ export const NotFoundPage = () => {
       <Text maw={400} c={"gray.6"} size="sm">
         Кажется, вы перешли на неправильной ссылке или страница была удалена.
       </Text>
-      <Button onClick={() => navigate(-1)}>
-        <ArrowLeft />
-        <span>Назад</span>
+      <Button onClick={() => navigate("/")}>
+        <Group gap={10}>
+          <ArrowLeft size={16} />
+          <span>На главную</span>
+        </Group>
       </Button>
     </div>
   );

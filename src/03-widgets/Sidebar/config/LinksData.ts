@@ -7,7 +7,6 @@ import {
   CalendarDays,
   Utensils,
   ShelvingUnit,
-  Users,
   IdCard,
   Download
 } from "lucide-react";
@@ -24,7 +23,6 @@ export const RestaurantAdminLinks = [
   { id: 4, category: "Зал", label: "Брони", path: "/admin/reservations", icon: CalendarDays },
   { id: 6, category: "Управление", label: "Меню", path: "/admin/menu", icon: Utensils },
   { id: 7, category: "Управление", label: "Склад", path: "/admin/storage", icon: ShelvingUnit },
-  { id: 8, category: "Управление", label: "Клиенты", path: "/admin/customers", icon: Users },
   { id: 9, category: "Управление", label: "Сотрудники", path: "/admin/employees", icon: IdCard },
 ];
 

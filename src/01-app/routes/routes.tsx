@@ -1,10 +1,10 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import App from "../App";
-import { LogRegPage } from "@/02-pages/auth";
+
 import { AdminPanelLayout, CustomerLayout, KitchenLayout, WaiterLayout } from "../layouts";
+import { LogRegPage } from "@/02-pages/auth";
 import { SuperAdminRestaurantsPage } from "@/02-pages/superAdmin";
 import { SuperAdminAdminsPage } from "@/02-pages/superAdmin";
-import { LoginGuard } from "./guards/LoginGuard";
 import { NotFoundPage } from "@/02-pages/NotFound";
 import {
   AdminEmployeesPage,
@@ -14,14 +14,18 @@ import {
   AdminReviewPage,
   AdminStoragePage,
   AdminTablesPage,
-  AdminUsersPage,
 } from "@/02-pages/restaurantAdmin";
 import {
   StorageIncomePage,
   StorageRemainsPage,
   StorageReviewPage,
 } from "@/02-pages/storeKeeper";
+
 import { RoleGuard } from "./guards/RoleGuard";
+import { LoginGuard } from "./guards/LoginGuard";
+import type { RouteHandle } from "@/03-widgets/Header";
+import { WaiterOneTablePage, WaiterTablesPage } from "@/02-pages/waiter";
+import { CustomerReservationsPage, CustomerRestaurantsPage } from "@/02-pages/customer";
 
 export const router = createBrowserRouter([
   {
@@ -59,10 +63,12 @@ export const router = createBrowserRouter([
               {
                 path: "restaurants",
                 element: <SuperAdminRestaurantsPage />,
+                handle: { category: "Платформа", breadcrumb: "Рестораны" } satisfies RouteHandle,
               },
               {
                 path: "admins",
                 element: <SuperAdminAdminsPage />,
+                handle: { category: "Платформа", breadcrumb: "Администраторы" } satisfies RouteHandle,
               },
             ],
           },
@@ -84,34 +90,37 @@ export const router = createBrowserRouter([
               {
                 path: "review",
                 element: <AdminReviewPage />,
+                handle: { category: "Зал", breadcrumb: "Обзор" } satisfies RouteHandle,
               },
               {
                 path: "tables",
                 element: <AdminTablesPage />,
+                handle: { category: "Зал", breadcrumb: "Столы" } satisfies RouteHandle,
               },
               {
                 path: "orders",
                 element: <AdminOrdersPage />,
+                handle: { category: "Зал", breadcrumb: "Заказы" } satisfies RouteHandle,
               },
               {
                 path: "reservations",
                 element: <AdminReservationsPage />,
+                handle: { category: "Зал", breadcrumb: "Брони" } satisfies RouteHandle,
               },
               {
                 path: "menu",
                 element: <AdminMenuPage />,
+                handle: { category: "Управление", breadcrumb: "Меню" } satisfies RouteHandle,
               },
               {
                 path: "storage",
                 element: <AdminStoragePage />,
-              },
-              {
-                path: "customers",
-                element: <AdminUsersPage />,
+                handle: { category: "Управление", breadcrumb: "Склад" } satisfies RouteHandle,
               },
               {
                 path: "employees",
                 element: <AdminEmployeesPage />,
+                handle: { category: "Управление", breadcrumb: "Сотрудники" } satisfies RouteHandle,
               },
             ],
           },
@@ -133,14 +142,17 @@ export const router = createBrowserRouter([
               {
                 path: "review",
                 element: <StorageReviewPage />,
+                handle: { category: "Склад", breadcrumb: "Обзор" } satisfies RouteHandle,
               },
               {
                 path: "remains",
                 element: <StorageRemainsPage />,
+                handle: { category: "Склад", breadcrumb: "Остатки" } satisfies RouteHandle,
               },
               {
                 path: "income",
                 element: <StorageIncomePage />,
+                handle: { category: "Склад", breadcrumb: "Приход" } satisfies RouteHandle,
               },
             ],
           },
@@ -154,6 +166,20 @@ export const router = createBrowserRouter([
           {
             path: "waiter",
             element: <WaiterLayout />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="tables" replace />
+              },
+              {
+                path: "tables",
+                element: <WaiterTablesPage />
+              },
+              {
+                path: "tables/:id",
+                element: <WaiterOneTablePage />
+              }
+            ]
           }
         ]
       },
@@ -175,7 +201,21 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "customer",
-            element: <CustomerLayout />
+            element: <CustomerLayout />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="restaurants" replace />
+              },
+              {
+                path: "restaurants",
+                element: <CustomerRestaurantsPage />
+              },
+              {
+                path: "reservations",
+                element: <CustomerReservationsPage />
+              }
+            ]
           }
         ]
       },

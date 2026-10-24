@@ -6,7 +6,7 @@ export const homeByRole: Record<Role, string> = {
     storekeeper: "/storage/review",
     waiter: "/waiter",
     cook: "/kitchen",
-    customer: "/restaurants",
+    customer: "/customer",
 };
 
 export interface WhichRestaurant {

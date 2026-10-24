@@ -1,4 +1,4 @@
-import { Burger, createTheme } from "@mantine/core";
+import { createTheme } from "@mantine/core";
 
 export const theme = createTheme({
     primaryColor: "teal",
@@ -16,5 +16,6 @@ export const theme = createTheme({
         sm: "0.5rem",
         md: "12px",
         lg: "16px",
-    }
+    },
+    defaultRadius: "sm"
 })

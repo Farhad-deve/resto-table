@@ -12,7 +12,7 @@ export const LoginGuard = () => {
 
   if (isPending) return <LoadingPage />;
 
-  if (isError) return <Outlet />; // Outlet for now
+  if (isError) return <Outlet />; 
 
   if (user?.role) return <Navigate to={homeByRole[user.role]} replace />;
 };

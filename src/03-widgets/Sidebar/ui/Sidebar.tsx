@@ -1,29 +1,33 @@
 import {
   Avatar,
+  Badge,
   Box,
   Group,
+  Indicator,
+  Paper,
   Skeleton,
   Stack,
   Text,
 } from "@mantine/core";
-import { Globe,  ShelvingUnit, Store } from "lucide-react";
+import { Globe, ShelvingUnit, Store } from "lucide-react";
 import {
   RestaurantAdminLinks,
   StoreKeeperLinks,
   SuperAdminLinks,
 } from "../config/LinksData";
 import { SidebarLink } from "./SidebarLink";
-import { LogoutButton} from "@/04-features/auth";
+import { LogoutButton } from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
 import { ProfileButton } from "@/06-shared/ui/ProfileButton";
+import { useSuperAStats } from "@/05-entities/restaurant";
 
 interface SidebarProps {
   collapsed: boolean;
-  inActiveRestaurantsCount?: number;
 }
 
-export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) => {
-  const { data: user, isPending: isUserPending } = useMe();
+export const Sidebar = ({ collapsed }: SidebarProps) => {
+  const { data: user } = useMe();
+  const { data: stats } = useSuperAStats();
 
   const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
     (link) => link.category === "Зал",
@@ -31,6 +35,37 @@ export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) =
   const RestaurantAdminControlLinks = RestaurantAdminLinks.filter(
     (link) => link.category === "Управление",
   );
+
+  const showBadge = ({
+    badgeIndicatorColor,
+    badgeContent,
+  }: {
+    badgeIndicatorColor: string;
+    badgeContent: string;
+  }) => {
+    if (!stats?.inactive || stats.inactive <= 0) return null;
+
+    if (collapsed) {
+      return (
+        <Indicator
+          color={badgeIndicatorColor}
+          size={6}
+          processing
+          style={{ position: "absolute", top: "0.5rem", right: "1.3rem" }}
+        >
+          <span></span>
+        </Indicator>
+      );
+    }
+
+    return (
+      <Badge color={badgeIndicatorColor} size="xs">
+        <Text c={"dark"} fw={500} size="xs" tt={"lowercase"}>
+          {badgeContent}
+        </Text>
+      </Badge>
+    );
+  };
 
   return (
     <div className={`h-full`}>
@@ -53,72 +88,73 @@ export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) =
               )}
             </Group>
 
-            {isUserPending ? (
-              <Skeleton height={50} />
-            ) : (
-              <Group
-                gap={8}
-                className="border-[1.5px] border-[#DEE2E6]"
-                bdrs={"sm"}
-                py={5}
-                px={"xs"}
-                hidden={collapsed}
-              >
-                <Box bg={"gray.1"} c={"gray.5"} p={8} bdrs={"sm"}>
-                  {user?.role === "superadmin" ? (
-                    <Globe size={14} />
-                  ) : user?.role === "restaurant_admin" ? (
-                    <Store size={14} />
-                  ) : (
-                    <ShelvingUnit size={14} />
-                  )}
-                </Box>
+            <Group
+              gap={8}
+              className="border-[1.5px] border-[#DEE2E6]"
+              bdrs={"sm"}
+              py={5}
+              px={"xs"}
+              hidden={collapsed}
+            >
+              <Box bg={"gray.1"} c={"gray.5"} p={8} bdrs={"sm"}>
+                {user?.role === "superadmin" ? (
+                  <Globe size={14} />
+                ) : user?.role === "restaurant_admin" ? (
+                  <Store size={14} />
+                ) : (
+                  <ShelvingUnit size={14} />
+                )}
+              </Box>
 
-                <Stack gap={0}>
-                  <Text fw={600} size="xs">
-                    {user?.role === "superadmin"
-                      ? "Платформа"
-                      : user?.restaurant?.name}
-                  </Text>
-                  <Text size={"xs"} c={"gray.6"}>
-                    {/* Total numbers of restaurants comes here or restaurant address*/}
-                    4 ресторанов
-                  </Text>
-                </Stack>
-              </Group>
-            )}
+              <Stack gap={0}>
+                <Text fw={600} size="xs">
+                  {user?.role === "superadmin"
+                    ? "Платформа"
+                    : user?.restaurant?.name}
+                </Text>
+                <Text size={"xs"} c={"gray.6"}>
+                  {stats?.total} ресторанов
+                </Text>
+              </Stack>
+            </Group>
           </Stack>
 
           <Stack gap={"xs"}>
-            {isUserPending ? (
-              <Skeleton height={15} />
-            ) : (
-              <Text
-                c={"gray.5"}
-                fw={600}
-                size="xs"
-                lts={"1px"}
-                hidden={collapsed}
-              >
-                {user?.role === "superadmin"
-                  ? "ПЛАТФОРМА"
-                  : user?.role === "restaurant_admin"
-                    ? "ЗАЛ"
-                    : "СКЛАД"}
-              </Text>
-            )}
+            <Text
+              c={"gray.5"}
+              fw={600}
+              size="xs"
+              lts={"1px"}
+              hidden={collapsed}
+            >
+              {user?.role === "superadmin"
+                ? "ПЛАТФОРМА"
+                : user?.role === "restaurant_admin"
+                  ? "ЗАЛ"
+                  : "СКЛАД"}
+            </Text>
 
-            {isUserPending ? (
-              <Stack>
-                <Skeleton height={35} />
-                <Skeleton height={35} />
-                <Skeleton height={35} />
-                <Skeleton height={35} />
-              </Stack>
-            ) : (
-              <Stack gap={4}>
-                {user?.role === "superadmin" ? (
-                  SuperAdminLinks.map((link) => (
+            <Stack gap={4}>
+              {user?.role === "superadmin" ? (
+                SuperAdminLinks.map((link) => (
+                  <SidebarLink
+                    key={link.id}
+                    path={link.path}
+                    label={link.label}
+                    icon={link.icon}
+                    collapsed={collapsed}
+                    badge={
+                      link.id === 1 &&
+                      showBadge({
+                        badgeIndicatorColor: "#eee",
+                        badgeContent: `неакт. ${stats?.inactive}`,
+                      })
+                    }
+                  />
+                ))
+              ) : user?.role === "restaurant_admin" ? (
+                <Stack gap={4}>
+                  {RestaurantAdminHallLinks.map((link) => (
                     <SidebarLink
                       key={link.id}
                       path={link.path}
@@ -126,37 +162,15 @@ export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) =
                       icon={link.icon}
                       collapsed={collapsed}
                     />
-                  ))
-                ) : user?.role === "restaurant_admin" ? (
-                  <Stack gap={4}>
-                    {RestaurantAdminHallLinks.map((link) => (
-                      <SidebarLink
-                        key={link.id}
-                        path={link.path}
-                        label={link.label}
-                        icon={link.icon}
-                        collapsed={collapsed}
-                      />
-                    ))}
+                  ))}
 
-                    {!collapsed && (
-                      <Text c={"gray.5"} fw={600} size="xs" lts={"1px"}>
-                        УПРАВЛЕНИЕ
-                      </Text>
-                    )}
+                  {!collapsed && (
+                    <Text c={"gray.5"} fw={600} size="xs" lts={"1px"}>
+                      УПРАВЛЕНИЕ
+                    </Text>
+                  )}
 
-                    {RestaurantAdminControlLinks.map((link) => (
-                      <SidebarLink
-                        key={link.id}
-                        path={link.path}
-                        label={link.label}
-                        icon={link.icon}
-                        collapsed={collapsed}
-                      />
-                    ))}
-                  </Stack>
-                ) : (
-                  StoreKeeperLinks.map((link) => (
+                  {RestaurantAdminControlLinks.map((link) => (
                     <SidebarLink
                       key={link.id}
                       path={link.path}
@@ -164,16 +178,24 @@ export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) =
                       icon={link.icon}
                       collapsed={collapsed}
                     />
-                  ))
-                )}
-              </Stack>
-            )}
+                  ))}
+                </Stack>
+              ) : (
+                StoreKeeperLinks.map((link) => (
+                  <SidebarLink
+                    key={link.id}
+                    path={link.path}
+                    label={link.label}
+                    icon={link.icon}
+                    collapsed={collapsed}
+                  />
+                ))
+              )}
+            </Stack>
           </Stack>
         </Stack>
 
-        {isUserPending ? (
-          <Skeleton height={50} />
-        ) : collapsed ? (
+        {collapsed ? (
           <Stack align="center">
             <Avatar color="teal.8" className="cursor-pointer">
               <Text c={"white"} size="sm" fw={600}>
@@ -185,7 +207,9 @@ export const Sidebar = ({ inActiveRestaurantsCount, collapsed }: SidebarProps) =
             <LogoutButton />
           </Stack>
         ) : (
-          <ProfileButton user={user} rightSection={<LogoutButton />} />
+          <Box className="border-t border-[#E9ECEF] rounded-lg">
+            <ProfileButton user={user} rightSection={<LogoutButton />} />
+          </Box>
         )}
       </Stack>
     </div>

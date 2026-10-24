@@ -4,7 +4,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect } from "react";
-import { Header } from "@/03-widgets/Header";
+import { BreadCrumbHeader } from "@/03-widgets/Header";
 
 export const AdminPanelLayout = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -29,6 +29,7 @@ export const AdminPanelLayout = () => {
           collapsed: { mobile: !opened },
         }}
         padding="sm"
+        bg={"#f8f9fa"}
       >
         <AppShell.Header>
           <Group h="100%" px="md">
@@ -41,6 +42,7 @@ export const AdminPanelLayout = () => {
                 color="gray"
               />
             </div>
+            <BreadCrumbHeader />
           </Group>
         </AppShell.Header>
 
