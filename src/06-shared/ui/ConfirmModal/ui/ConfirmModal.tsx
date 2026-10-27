@@ -11,7 +11,15 @@ interface ConfirmModalProps {
   closeModal: () => void;
 }
 
-export const ConfirmModal = ({ title, description, onConfirm, opened, closeModal, isConfirmLoading, confirmButtonLabel }: ConfirmModalProps) => {
+export const ConfirmModal = ({
+  title,
+  description,
+  onConfirm,
+  opened,
+  closeModal,
+  isConfirmLoading,
+  confirmButtonLabel,
+}: ConfirmModalProps) => {
   return (
     <Modal
       padding={0}
@@ -20,7 +28,7 @@ export const ConfirmModal = ({ title, description, onConfirm, opened, closeModal
       onClose={closeModal}
       withCloseButton={false}
       overlayProps={{
-        backgroundOpacity: 0.35
+        backgroundOpacity: 0.35,
       }}
       closeOnClickOutside={isConfirmLoading ? false : true}
       closeOnEscape={isConfirmLoading ? false : true}
@@ -30,7 +38,12 @@ export const ConfirmModal = ({ title, description, onConfirm, opened, closeModal
           <Text fw={600} size="lg">
             {title}
           </Text>
-          <ActionIcon variant="transparent" color="gray.5" onClick={closeModal} disabled={isConfirmLoading}>
+          <ActionIcon
+            variant="transparent"
+            color="gray.5"
+            onClick={closeModal}
+            disabled={isConfirmLoading}
+          >
             <X size={20} />
           </ActionIcon>
         </Group>
@@ -41,8 +54,12 @@ export const ConfirmModal = ({ title, description, onConfirm, opened, closeModal
       </Stack>
 
       <Group
-        bg={"#f8f9fa"} gap={12} py={16} px={24}
-        justify="flex-end" className="border-t border-[#e9ecef]"
+        bg={"#f8f9fa"}
+        gap={12}
+        py={16}
+        px={24}
+        justify="flex-end"
+        className="border-t border-[#e9ecef]"
       >
         <Button
           variant="outline"
@@ -54,7 +71,11 @@ export const ConfirmModal = ({ title, description, onConfirm, opened, closeModal
         >
           Отмена
         </Button>
-        <Button loading={isConfirmLoading} color="red" onClick={() => onConfirm()}>
+        <Button
+          loading={isConfirmLoading}
+          color="red"
+          onClick={() => onConfirm()}
+        >
           {confirmButtonLabel}
         </Button>
       </Group>

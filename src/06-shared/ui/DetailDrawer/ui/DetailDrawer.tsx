@@ -4,24 +4,17 @@ import { type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface DetailDrawerProps {
-  emptyStateText: string;
-  EmptyStateIcon: LucideIcon;
-  content: ReactNode;
-  actions: ReactNode;
+  emptyStateText: string; EmptyStateIcon: LucideIcon;
+  content: ReactNode; actions: ReactNode;
   drawerTitle?: string;
-  isDrawerOpen: boolean;
-  onDrawerOpen: () => void;
-  onDrawerClose: () => void;
+  isDrawerOpen: boolean; onDrawerOpen: () => void; onDrawerClose: () => void;
 }
 
 export const DetailDrawer = ({
-  emptyStateText,
-  EmptyStateIcon,
-  content,
-  actions,
+  emptyStateText, EmptyStateIcon,
+  content, actions,
   drawerTitle,
-  isDrawerOpen,
-  onDrawerClose,
+  isDrawerOpen, onDrawerClose,
 }: DetailDrawerProps) => {
   const isLgScreen = useMediaQuery("(min-width: 1200px)");
 
@@ -29,12 +22,12 @@ export const DetailDrawer = ({
     <Card
       withBorder
       p={0}
-      mih={380}
+      mih={400}
       style={{ position: "sticky", top: "5rem" }}
       className="hidden! lg:block!"
     >
       {!isDrawerOpen ? (
-        <Stack gap={8} align="center" justify="center" h={380}>
+        <Stack gap={8} align="center" justify="center" h={400}>
           <EmptyStateIcon color="gray" size={24} />
           <Text ta={"center"} size="sm" lh={"sm"} c={"gray"}>
             {emptyStateText}
@@ -50,13 +43,16 @@ export const DetailDrawer = ({
 
       {!isLgScreen && (
         <Drawer
-          title={drawerTitle}
+          title={
+            <Text fw={600} size="lg">{drawerTitle}</Text>
+          }
+          size={"85%"}
           position="right"
           opened={isDrawerOpen}
           onClose={onDrawerClose}
-          className=""
         >
           {content}
+          {actions}
         </Drawer>
       )}
     </Card>

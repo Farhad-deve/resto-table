@@ -1,5 +1,8 @@
-import { useRestaurants, useSuperAStats } from "@/05-entities/restaurant";
+import { useDeleteRestaurant, useRestaurants, useSuperAStats, type Restaurant } from "@/05-entities/restaurant";
+import { formatPhoneNumber } from "@/06-shared/lib/utils";
+import { ConfirmModal } from "@/06-shared/ui/ConfirmModal";
 import { DetailDrawer } from "@/06-shared/ui/DetailDrawer";
+import { InfoTable } from "@/06-shared/ui/InfoTable";
 import {
   ActionIcon,
   Avatar,
@@ -8,8 +11,6 @@ import {
   Card,
   Grid,
   Group,
-  Pagination,
-  ScrollArea,
   Stack,
   Table,
   Tabs,
@@ -18,7 +19,7 @@ import {
   ThemeIcon,
   Title,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
 import {
   CircleCheck,
   Edit2,
@@ -31,7 +32,8 @@ import {
   UserRoundX,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { TableHeaderData } from "../config/TableData";
 
 const isActiveByTab = {
   all: undefined,
@@ -43,20 +45,26 @@ type RestaurantTabs = "all" | "active" | "inactive";
 
 export const SuperAdminRestaurantsPage = () => {
   const [activeTab, setActiveTab] = useState<RestaurantTabs>("all");
-  const { data: restaurants } = useRestaurants({
-    is_active: isActiveByTab[activeTab],
-  });
+  const [selectedRestaurant, setselectedRestaurant] = useState<Restaurant>();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebouncedValue(search, 500);
+  
+  const { data: restaurants } = useRestaurants({ is_active: isActiveByTab[activeTab], page: page, search: debouncedSearch });
   const { data: stats } = useSuperAStats();
-  const [opened, { open, close }] = useDisclosure();
-  const [restaurantInfo, setRestaurantInfo] = useState(null);
+  const { mutate: deleteRestaurant, isPending: isDeletePending } = useDeleteRestaurant();
 
-  const rows = restaurants?.results.map((rest) => (
-    <Table.Tr
-      key={rest.id}
-      className="cursor-pointer"
+  const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure();
+  const [confirmModalOpened, { open: openConfirmModal, close: closeConfirmModal }] = useDisclosure();
+
+  const isLgScreen = useMediaQuery("(min-width: 1200px)");
+
+  const bodyRows = restaurants?.results.map((rest) => (
+    <Table.Tr key={rest.id}
+      className={`cursor-pointer border-b! border-[#f1f3f5]! ${!rest.is_active ? "opacity-45" : ""} ${selectedRestaurant?.id === rest.id ? "bg-teal-50!" : ""}`}
       onClick={() => {
-        open()
-        setRestaurantInfo()
+        openDrawer();
+        setselectedRestaurant(rest)
       }}
     >
       <Table.Td>
@@ -87,7 +95,7 @@ export const SuperAdminRestaurantsPage = () => {
               {rest.admin.first_name} {rest.admin.last_name}
             </Text>
             <Text size="xs" c={"gray"}>
-              {rest.admin.phone_number}
+              {formatPhoneNumber(rest.admin.phone_number)}
             </Text>
           </Stack>
         )}
@@ -131,8 +139,30 @@ export const SuperAdminRestaurantsPage = () => {
     </Table.Tr>
   ));
 
+  const itemsPerPage = 10;
+  const TotalPages = Math.ceil((restaurants?.count ?? 0) / itemsPerPage);
+  const fromItemsIndex = restaurants?.results && restaurants.results.length > 0
+    ? (page - 1) * itemsPerPage + 1
+    : 0;
+
+  const toItemsIndex = fromItemsIndex > 0
+    ? fromItemsIndex + (restaurants?.results.length ?? 0) - 1
+    : 0;
+
+    useEffect(() => {
+      setPage(1);
+      closeDrawer();
+      setselectedRestaurant(undefined);
+    }, [activeTab, search]);
+
+    useEffect(() => {
+      closeDrawer();
+      setselectedRestaurant(undefined);
+      setSearch("");
+    }, [page])
+
   return (
-    <Stack gap={"lg"} p={"xs"}>
+    <Stack gap={"lg"}>
       <Group align="flex-end" justify="space-between">
         <Stack gap={0}>
           <Text size="xl" fw={600}>
@@ -149,11 +179,11 @@ export const SuperAdminRestaurantsPage = () => {
       <Stack>
         <Grid>
           <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
-            <Card withBorder>
+            <Card withBorder h={"100%"}>
               <Stack gap={8}>
                 <Group gap={10}>
                   <Store size={16} />
-                  <Text size="sm" c={"gray"} fw={500}>
+                  <Text size="xs" c={"gray"} fw={500}>
                     Всего ресторанов
                   </Text>
                 </Group>
@@ -163,11 +193,11 @@ export const SuperAdminRestaurantsPage = () => {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
-            <Card withBorder>
+            <Card withBorder h={"100%"}>
               <Stack gap={8}>
                 <Group gap={10}>
                   <CircleCheck size={16} color="teal" />
-                  <Text size="sm" c={"gray"} fw={500}>
+                  <Text size="xs" c={"gray"} fw={500}>
                     Активные
                   </Text>
                 </Group>
@@ -179,11 +209,11 @@ export const SuperAdminRestaurantsPage = () => {
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
-            <Card withBorder>
+            <Card withBorder h={"100%"}>
               <Stack gap={8}>
                 <Group gap={10}>
                   <Pause size={16} />
-                  <Text size="sm" c={"gray"} fw={500}>
+                  <Text size="xs" c={"gray"} fw={500}>
                     Неактивные
                   </Text>
                 </Group>
@@ -202,6 +232,8 @@ export const SuperAdminRestaurantsPage = () => {
             placeholder="Название или адрес"
             w={300}
             leftSection={<Search size={16} />}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
 
           <Tabs
@@ -235,72 +267,25 @@ export const SuperAdminRestaurantsPage = () => {
 
         <Grid>
           <Grid.Col span={{ base: 12, lg: 8.5 }}>
-            <ScrollArea
-              scrollbarSize={5}
-              offsetScrollbars
-              bdrs={"md"}
-              bg={"white"}
-              className="overflow-hidden border border-[#e9ecef]"
-            >
-              <Table
-                miw={650}
-                highlightOnHover
-                bg={"white"}
-                verticalSpacing={"sm"}
-                horizontalSpacing={"lg"}
-                className="rounded-lg"
-              >
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>
-                      <Text size="xs" fw={600} c={"gray.7"}>
-                        Ресторан
-                      </Text>
-                    </Table.Th>
-                    <Table.Th>
-                      <Text size="xs" fw={600} c={"gray.7"}>
-                        Адиминиcтратор
-                      </Text>
-                    </Table.Th>
-                    <Table.Th>
-                      <Text size="xs" fw={600} c={"gray.7"}>
-                        Часы
-                      </Text>
-                    </Table.Th>
-                    <Table.Th>
-                      <Text size="xs" fw={600} c={"gray.7"}>
-                        Статус
-                      </Text>
-                    </Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-
-                <Table.Tbody>{rows}</Table.Tbody>
-              </Table>
-
-              <Group
-                justify="space-between"
-                p={"md"}
-                className="border-t border-gray-200"
-              >
-                <Text size="xs" c={"gray"}>
-                  <span></span>-<span>{restaurants?.results?.length}</span> из{" "}
-                  {restaurants?.count}
-                </Text>
-
-                {/* <Pagination withPages={false} /> */}
-              </Group>
-            </ScrollArea>
+            <InfoTable
+              headerRowsArray={TableHeaderData}
+              bodyRows={bodyRows}
+              fromItems={fromItemsIndex}
+              toItems={toItemsIndex}
+              totalItems={restaurants?.count ?? 0}
+              currentPage={page}
+              totalPages={TotalPages}
+              onPageChange={setPage}
+            />
           </Grid.Col>
 
           <Grid.Col span={{ base: 12, lg: 3.5 }}>
-            <DetailDrawer
-              emptyStateText="Выберите ресторан, чтобы увидеть детали и администратора"
+            <DetailDrawer emptyStateText="Выберите ресторан, чтобы увидеть детали и администратора"
               EmptyStateIcon={Store}
-              isDrawerOpen={opened}
+              isDrawerOpen={drawerOpened}
               drawerTitle="Ресторан"
-              onDrawerOpen={open}
-              onDrawerClose={close}
+              onDrawerOpen={openDrawer}
+              onDrawerClose={closeDrawer}
               content={
                 <Stack gap={0}>
                   <Stack
@@ -319,58 +304,58 @@ export const SuperAdminRestaurantsPage = () => {
                         <Store size={20} />
                       </ThemeIcon>
 
-                      <ActionIcon
-                        variant="transparent"
-                        c={"gray"}
-                        size={"lg"}
-                        className="hover:bg-gray-100!"
-                        onClick={close}
-                      >
-                        <X size={16} />
-                      </ActionIcon>
+                      {isLgScreen && (
+                        <ActionIcon
+                          variant="transparent"
+                          c={"gray"}
+                          size={"lg"}
+                          className="hover:bg-gray-100!"
+                          onClick={closeDrawer}
+                        >
+                          <X size={16} />
+                        </ActionIcon>
+                      )}
                     </Group>
 
                     <Stack gap={0}>
                       <Group gap={10}>
                         <Text size="lg" c={"dark"} fw={600}>
-                          {/* Restaurant names comes here */}
-                          Asosiy restoran
+                          {selectedRestaurant?.name}
                         </Text>
 
-                        {/* Активен if active */}
-                        <Badge
-                          color="gray.3"
-                          size="lg"
-                          c={"dark"}
-                          variant="outline"
-                          leftSection={
-                            <div className="w-1.5 h-1.5 bg-[#40c057] rounded-full"></div>
-                          }
-                        >
-                          <Text fw={500} tt={"capitalize"} size="xs">
-                            Активен
-                          </Text>
-                        </Badge>
-
-                        {/* Неактивен if inactive */}
-                        {/* <Badge
-                          color="gray.3"
-                          size="lg"
-                          c={"dark"}
-                          variant="outline"
-                          leftSection={
-                            <div className="w-1.5 h-1.5 bg-[#adb5bd] rounded-full"></div>
-                          }
-                        >
-                          <Text fw={500} tt={"capitalize"} size="xs">
-                            Неактивен
-                          </Text>
-                        </Badge> */}
+                        {selectedRestaurant?.is_active ? (
+                          <Badge
+                            color="gray.3"
+                            size="lg"
+                            c={"dark"}
+                            variant="outline"
+                            leftSection={
+                              <div className="w-1.5 h-1.5 bg-[#40c057] rounded-full"></div>
+                            }
+                          >
+                            <Text fw={500} tt={"capitalize"} size="xs">
+                              Активен
+                            </Text>
+                          </Badge>
+                        ) : (
+                          <Badge
+                            color="gray.3"
+                            size="lg"
+                            c={"dark"}
+                            variant="outline"
+                            leftSection={
+                              <div className="w-1.5 h-1.5 bg-[#adb5bd] rounded-full"></div>
+                            }
+                          >
+                            <Text fw={500} tt={"capitalize"} size="xs">
+                              Неактивен
+                            </Text>
+                          </Badge>
+                        )}
                       </Group>
 
                       <Text size="xs" c={"gray"}>
-                        {/* Restaurant adress comes here */}
-                        Nukus shahri
+                        {selectedRestaurant?.address}
                       </Text>
                     </Stack>
                   </Stack>
@@ -379,14 +364,14 @@ export const SuperAdminRestaurantsPage = () => {
                     px={"md"}
                     py={"sm"}
                     style={{ borderBottom: "1px solid #efefef" }}
+                    gap={"lg"}
                   >
                     <Stack gap={0}>
                       <Text size="xs" c={"gray"}>
                         Телефон
                       </Text>
-                      <Text size="sm" fw={500} c={"dark"}>
-                        {/* Restaurant phone comes here */}
-                        +998 99 999 99 99
+                      <Text size="xs" fw={500} c={"dark"}>
+                        {formatPhoneNumber(selectedRestaurant?.phone ?? "")}
                       </Text>
                     </Stack>
 
@@ -394,114 +379,134 @@ export const SuperAdminRestaurantsPage = () => {
                       <Text size="xs" c={"gray"}>
                         Час работы
                       </Text>
-                      <Text size="sm" fw={500} c={"dark"}>
-                        {/* Restaurant working hours comes here */}
-                        10:00 - 22:00
+                      <Text size="xs" fw={500} c={"dark"}>
+                        {selectedRestaurant?.start_time.slice(0, 5)} - {selectedRestaurant?.end_time.slice(0, 5)}
                       </Text>
                     </Stack>
                   </Group>
 
-                  {/* Yes admin UI vv */}
-                  <Group
-                    px={"md"}
-                    py={"sm"}
-                    gap={12}
-                    style={{ borderBottom: "1px solid #efefef" }}
-                  >
-                    <Avatar variant="light" color="teal.1">
-                      {/* Admin avatar initials comes here */}
-                      <Text fw={600} size="sm">
-                        AA
-                      </Text>
-                    </Avatar>
-
-                    <Stack gap={0}>
-                      <Text size="xs" fw={600} c={"dark"}>
-                        {/* Admin name comes here */}
-                        Admin Name
-                      </Text>
-                      <Text size="xs" c={"gray"}>
-                        {/* Admin phone comes here */}
-                        +998 90 100 00 01
-                      </Text>
-                    </Stack>
-                  </Group>
-
-                  {/* No admin UI vv */}
-                  {/* <Group px={"md"} py={"sm"} gap={12}>
-                    <Avatar
-                      variant="transparent"
-                      color="red"
-                      style={{
-                        borderWidth: "1px",
-                        borderStyle: "dashed",
-                        borderColor: "red.8",
-                      }}
+                  {selectedRestaurant?.admin ? (
+                    <Group
+                      px={"md"}
+                      py={"sm"}
+                      gap={12}
+                      style={{ borderBottom: "1px solid #efefef" }}
                     >
-                      <UserRoundX size={13} />
-                    </Avatar>
+                      <Avatar variant="light" color="teal.1">
+                        <Text fw={600} size="sm">
+                          {selectedRestaurant?.admin?.first_name.charAt(0).toUpperCase()}
+                          {selectedRestaurant?.admin?.last_name.charAt(0).toUpperCase()}
+                        </Text>
+                      </Avatar>
 
-                    <Stack gap={0}>
-                      <Text size="xs" fw={600} c={"red.8"}>
-                        Админ не назначен
-                      </Text>
-                      <Text size="xs" c={"gray"}>
-                        Назначьте его в разделе «Администраторы»
-                      </Text>
-                    </Stack>
-                  </Group> */}
+                      <Stack gap={0}>
+                        <Text size="xs" fw={600} c={"dark"}>
+                          {selectedRestaurant?.admin?.first_name}{" "}
+                          {selectedRestaurant?.admin?.last_name}
+                        </Text>
+                        <Text size="xs" c={"gray"}>
+                          {formatPhoneNumber(selectedRestaurant?.admin.phone_number)}
+                        </Text>
+                      </Stack>
+                    </Group>
+                  ) : (               
+                    <Group px={"md"} py={"sm"} gap={12}>
+                      <Avatar
+                        variant="transparent"
+                        color="red"
+                        style={{
+                          borderWidth: "1px",
+                          borderStyle: "dashed",
+                          borderColor: "#ffa8a8",
+                        }}
+                      >
+                        <UserRoundX size={15} />
+                      </Avatar>
+
+                      <Stack gap={0}>
+                        <Text size="xs" fw={600} c={"red.8"}>
+                          Админ не назначен
+                        </Text>
+                        <Text size="xs" c={"gray"}>
+                          Назначьте его в разделе «Администраторы»
+                        </Text>
+                      </Stack>
+                    </Group>
+                  )}
                 </Stack>
               }
               actions={
                 <Stack px={"md"} py={"sm"} gap={"xs"}>
                   <Button
                     leftSection={<Edit2 size={14} />}
-                    color="gray.3"
                     variant="outline"
                     c={"gray.7"}
+                    color="gray"
                   >
                     <Text size="xs" fw={600}>
                       Редактировать
                     </Text>
                   </Button>
 
-                  {/* <Stack gap={5}>
+                  {selectedRestaurant?.is_active ? (
                     <Button
-                      leftSection={<Play size={14} />}
-                      color="teal"
+                      leftSection={<Pause size={14} />}
+                      color="red.8"
                       variant="outline"
-                      c={"teal"}
+                      c={"red.8"}
                     >
                       <Text size="xs" fw={600}>
-                        Активировать
+                        Деактивировать
                       </Text>
                     </Button>
-                    <Text size={"xs"} c={"gray"}>
-                      Неактивный ресторан не доступен для бронирования
-                    </Text>
-                  </Stack> */}
-
-                  <Button
-                    leftSection={<Pause size={14} />}
-                    color="red.8"
-                    variant="outline"
-                    c={"red.8"}
-                  >
-                    <Text size="xs" fw={600}>
-                      Деактивировать
-                    </Text>
-                  </Button>
+                  ) : (
+                    <Stack gap={5}>
+                      <Button
+                        leftSection={<Play size={14} />}
+                        variant="outline"
+                        c={"teal"}
+                      >
+                        <Text size="xs" fw={600}>
+                          Активировать
+                        </Text>
+                      </Button>
+                      <Text ta={"center"} size={"xs"} c={"gray"}>
+                        Неактивный ресторан не доступен для бронирования
+                      </Text>
+                    </Stack>
+                  )}
 
                   <Button
                     leftSection={<Trash size={14} />}
                     color="red.8"
                     variant="outline"
                     c={"red.8"}
+                    onClick={openConfirmModal}
                   >
                     <Text size="xs" fw={600}>
                       Удалить ресторан
                     </Text>
                   </Button>
+
+                  <ConfirmModal title={`Удалить «${selectedRestaurant?.name}»?`}
+                    description="
+                    Меню, столы, склад, сотрудники, заказы, брони и администратор ресторана
+                    будут удалены без возможности восстановления. Чтобы временно скрыть
+                    ресторан, используйте «Деактивировать»
+                    "
+                    confirmButtonLabel="Удалить навсегда"
+                    opened={confirmModalOpened}
+                    closeModal={closeConfirmModal}
+                    onConfirm={() => {
+                      deleteRestaurant(selectedRestaurant?.id!, {
+                        onSuccess: () => {
+                          closeConfirmModal();
+                          closeDrawer();
+                        }
+                      })
+                    }}
+                    isConfirmLoading={isDeletePending}
+                  />
                 </Stack>
               }
             />

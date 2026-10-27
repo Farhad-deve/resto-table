@@ -4,8 +4,6 @@ import {
   Box,
   Group,
   Indicator,
-  Paper,
-  Skeleton,
   Stack,
   Text,
 } from "@mantine/core";
@@ -107,13 +105,17 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
               </Box>
 
               <Stack gap={0}>
-                <Text fw={600} size="xs">
+                <Text fw={600} size="sm">
                   {user?.role === "superadmin"
                     ? "Платформа"
                     : user?.restaurant?.name}
                 </Text>
                 <Text size={"xs"} c={"gray.6"}>
-                  {stats?.total} ресторанов
+                  {user?.role === "superadmin"
+                    ? `${stats?.total} ресторанов`
+                    : user?.role === "restaurant_admin"
+                      ? "Администратор"
+                      : "Склад"}
                 </Text>
               </Stack>
             </Group>

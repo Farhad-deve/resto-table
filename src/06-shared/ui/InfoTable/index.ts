@@ -1,0 +1,1 @@
+export { InfoTable } from './ui/InfoTable';
