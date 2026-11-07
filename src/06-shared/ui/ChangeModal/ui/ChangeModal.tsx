@@ -1,4 +1,11 @@
-import { ActionIcon, Group, Modal, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Group,
+  Modal,
+  ScrollArea,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -24,13 +31,14 @@ export const ChangeModal = ({
       padding={0}
       centered
       opened={opened}
-      onClose={closeModal}
       withCloseButton={false}
+      onClose={closeModal}
       overlayProps={{
         backgroundOpacity: 0.35,
       }}
       closeOnClickOutside={isChangeLoading ? false : true}
       closeOnEscape={isChangeLoading ? false : true}
+      scrollAreaComponent={ScrollArea.Autosize}
     >
       <Stack>
         <Group justify="space-between" pt={16} px={24}>
@@ -52,9 +60,7 @@ export const ChangeModal = ({
           </ActionIcon>
         </Group>
 
-        <Stack>
-          {content}
-        </Stack>
+        <Stack>{content}</Stack>
       </Stack>
     </Modal>
   );

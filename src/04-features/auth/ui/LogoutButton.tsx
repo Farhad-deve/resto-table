@@ -19,7 +19,7 @@ export const LogoutButton = ({ logoutWithText } : LogoutButtonProps) => {
           Выйти из аккаунта
         </Button>
       ) : (
-        <ActionIcon onClick={open} variant="transparent" color="#868E96" className="group">
+        <ActionIcon onClick={(e) => { open(); e.stopPropagation(); }} variant="transparent" color="#868E96" className="group">
           <LogOut size={16} className="group-hover:text-red-500" />
         </ActionIcon>
       )}

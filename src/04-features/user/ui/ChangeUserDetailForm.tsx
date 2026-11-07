@@ -86,7 +86,7 @@ export const ChangeUserDetailForm = ({
           />
         </Stack>
 
-         {isError && (
+        {isError && (
           <Alert variant="light" color="red">
             <Group gap={10}>
               <AlertCircle size={16} color="#C92A2A" />

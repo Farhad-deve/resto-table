@@ -35,3 +35,8 @@ export interface UpdateMe {
     phone_number: string;
     email: string | null;
 }
+
+export interface ChangePassword {
+    old_password: string;
+    new_password: string;
+}

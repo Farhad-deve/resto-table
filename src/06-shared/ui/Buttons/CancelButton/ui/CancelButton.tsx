@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 interface CancelButtonProps {
   children: ReactNode;
   onCancel: () => void;
-  cancelDisabled: boolean;
+  cancelDisabled?: boolean;
 }
 
 export const CancelButton = ({ children, onCancel, cancelDisabled } : CancelButtonProps) => {

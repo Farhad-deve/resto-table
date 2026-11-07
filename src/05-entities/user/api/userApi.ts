@@ -1,5 +1,5 @@
 import { baseApi } from "@/06-shared/api";
-import type { UpdateMe, User } from "../model/types";
+import type { ChangePassword, UpdateMe, User } from "../model/types";
 import { addCountryCode } from "@/06-shared/utils";
 
 export const getMeRequest = async (): Promise<User> => {
@@ -16,5 +16,10 @@ export const updateMeRequest = async (data: Partial<UpdateMe>): Promise<User> =>
     ...(data.email === "" && { email: null }),
   };
   const res = await baseApi.patch<User>("/users/me", newData);
+  return res.data;
+};
+
+export const changePasswordRequest = async (data: ChangePassword) => {
+  const res = await baseApi.post("/users/me/change-password", data);
   return res.data;
 };

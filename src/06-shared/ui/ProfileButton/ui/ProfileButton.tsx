@@ -1,5 +1,4 @@
 import { Avatar, Group, Stack, Text } from "@mantine/core";
-import type { ReactElement } from "react";
 
 type User = {
   first_name: string;
@@ -9,15 +8,11 @@ type User = {
 
 interface ProfileButtonProps {
   user?: User;
-  rightSection: ReactElement;
 }
 
-export const ProfileButton = ({ user, rightSection }: ProfileButtonProps) => {
+export const ProfileButton = ({ user }: ProfileButtonProps) => {
   return (
-    <Group
-      className={`rounded-lg hover:bg-black/5`}
-      justify="space-between"
-    >
+    <Group className={`rounded-lg hover:bg-black/5`} justify="space-between">
       <Group gap={12} className="flex-1 cursor-pointer py-2 px-1">
         <Avatar color="teal.8" size={"2.2rem"}>
           <Text c={"white"} size="sm" fw={600}>
@@ -39,8 +34,6 @@ export const ProfileButton = ({ user, rightSection }: ProfileButtonProps) => {
           </Text>
         </Stack>
       </Group>
-
-      {rightSection}
     </Group>
   );
 };

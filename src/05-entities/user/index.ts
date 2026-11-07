@@ -6,7 +6,7 @@ export {
   logout,
 } from "./model/authSlice";
 
-export { useMe, useUpdateMe } from "./model/hooks";
+export { useMe, useUpdateMe, useChangePasswordMe } from "./model/hooks";
 
 export {
   homeByRole,

@@ -20,8 +20,8 @@ import { useMe } from "@/05-entities/user";
 import { ProfileButton } from "@/06-shared/ui/ProfileButton";
 import { useSuperAStats } from "@/05-entities/restaurant";
 import { useDisclosure } from "@mantine/hooks";
-import { ChangeModal } from "@/06-shared/ui";
-import { ChangeUserDetailForm } from "@/04-features/user";
+import { CancelButton, ChangeModal } from "@/06-shared/ui";
+import { ChangePasswordForm, ChangeUserDetailForm } from "@/04-features/user";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -30,7 +30,10 @@ interface SidebarProps {
 export const Sidebar = ({ collapsed }: SidebarProps) => {
   const { data: user } = useMe();
   const { data: stats } = useSuperAStats();
-  const [changeModalOpened, { open: openChangeModal, close: closeChangeModal }] = useDisclosure();
+  const [
+    changeModalOpened,
+    { open: openChangeModal, close: closeChangeModal },
+  ] = useDisclosure();
 
   const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
     (link) => link.category === "Зал",
@@ -204,7 +207,11 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
 
         {collapsed ? (
           <Stack align="center">
-            <Avatar onClick={openChangeModal} color="teal.8" className="cursor-pointer">
+            <Avatar
+              onClick={openChangeModal}
+              color="teal.8"
+              className="cursor-pointer"
+            >
               <Text c={"white"} size="sm" fw={600}>
                 {user?.first_name.charAt(0).toUpperCase()}
                 {user?.last_name.charAt(0).toUpperCase()}
@@ -214,9 +221,13 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
             <LogoutButton />
           </Stack>
         ) : (
-          <Box onClick={openChangeModal} className="border-t border-[#E9ECEF] rounded-lg">
-            <ProfileButton user={user} rightSection={<LogoutButton />} />
-          </Box>
+          <Group className="border-t border-[#E9ECEF] rounded-lg">
+            <Box onClick={openChangeModal}>
+              <ProfileButton user={user} />
+            </Box>
+
+            <LogoutButton />
+          </Group>
         )}
 
         <ChangeModal
@@ -226,10 +237,29 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
           content={
             <ScrollArea>
               {user && (
-                <ChangeUserDetailForm onSave={closeChangeModal} defaultData={user} />
+                <ChangeUserDetailForm
+                  onSave={closeChangeModal}
+                  defaultData={user}
+                />
               )}
 
-              
+              <ChangePasswordForm onSave={closeChangeModal} />
+
+              <Group
+                bg={"#f8f9fa"}
+                gap={12}
+                py={16}
+                px={24}
+                className="border-t border-[#e9ecef]"
+              >
+                <Group justify="space-between" w={"100%"}>
+                  <LogoutButton logoutWithText />
+                  <CancelButton
+                    children="Закрыть"
+                    onCancel={closeChangeModal}
+                  />
+                </Group>
+              </Group>
             </ScrollArea>
           }
         />

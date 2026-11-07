@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMeRequest, updateMeRequest } from "../api/userApi";
+import { changePasswordRequest, getMeRequest, updateMeRequest } from "../api/userApi";
 import { useSelector } from "react-redux";
 import { selectAccessToken } from "./authSlice";
-import type { UpdateMe } from "./types";
+import type { ChangePassword, UpdateMe } from "./types";
 
 export const useMe = () => {
   const accessToken = useSelector(selectAccessToken);
@@ -19,6 +19,16 @@ export const useUpdateMe = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateMe) => updateMeRequest(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    }
+  })
+};
+
+export const useChangePasswordMe = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ChangePassword) => changePasswordRequest(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
     }
