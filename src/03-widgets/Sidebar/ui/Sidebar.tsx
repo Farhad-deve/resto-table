@@ -4,6 +4,7 @@ import {
   Box,
   Group,
   Indicator,
+  ScrollArea,
   Stack,
   Text,
 } from "@mantine/core";
@@ -18,6 +19,9 @@ import { LogoutButton } from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
 import { ProfileButton } from "@/06-shared/ui/ProfileButton";
 import { useSuperAStats } from "@/05-entities/restaurant";
+import { useDisclosure } from "@mantine/hooks";
+import { ChangeModal } from "@/06-shared/ui";
+import { ChangeUserDetailForm } from "@/04-features/user";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -26,6 +30,7 @@ interface SidebarProps {
 export const Sidebar = ({ collapsed }: SidebarProps) => {
   const { data: user } = useMe();
   const { data: stats } = useSuperAStats();
+  const [changeModalOpened, { open: openChangeModal, close: closeChangeModal }] = useDisclosure();
 
   const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
     (link) => link.category === "Зал",
@@ -199,7 +204,7 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
 
         {collapsed ? (
           <Stack align="center">
-            <Avatar color="teal.8" className="cursor-pointer">
+            <Avatar onClick={openChangeModal} color="teal.8" className="cursor-pointer">
               <Text c={"white"} size="sm" fw={600}>
                 {user?.first_name.charAt(0).toUpperCase()}
                 {user?.last_name.charAt(0).toUpperCase()}
@@ -209,10 +214,25 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
             <LogoutButton />
           </Stack>
         ) : (
-          <Box className="border-t border-[#E9ECEF] rounded-lg">
+          <Box onClick={openChangeModal} className="border-t border-[#E9ECEF] rounded-lg">
             <ProfileButton user={user} rightSection={<LogoutButton />} />
           </Box>
         )}
+
+        <ChangeModal
+          title="Профиль"
+          opened={changeModalOpened}
+          closeModal={closeChangeModal}
+          content={
+            <ScrollArea>
+              {user && (
+                <ChangeUserDetailForm onSave={closeChangeModal} defaultData={user} />
+              )}
+
+              
+            </ScrollArea>
+          }
+        />
       </Stack>
     </div>
   );

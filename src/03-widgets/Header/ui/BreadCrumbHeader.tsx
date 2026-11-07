@@ -1,11 +1,13 @@
 import { useMatches } from "react-router"
-import { isRouteHandle } from '../lib/isRouteHandle';
+import { isRouteHandle } from '../utils/isRouteHandle';
 import { Breadcrumbs, Text } from "@mantine/core";
 import { ChevronRight } from "lucide-react";
 
 
 export const BreadCrumbHeader = () => {
   const matches = useMatches();
+
+  // console.log(matches)
 
   const routeHandles = matches.map(match => {
     return match.handle

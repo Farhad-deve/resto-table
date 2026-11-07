@@ -4,17 +4,24 @@ import { type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 interface DetailDrawerProps {
-  emptyStateText: string; EmptyStateIcon: LucideIcon;
-  content: ReactNode; actions: ReactNode;
+  emptyStateText: string;
+  EmptyStateIcon: LucideIcon;
+  content: ReactNode;
+  actions: ReactNode;
   drawerTitle?: string;
-  isDrawerOpen: boolean; onDrawerOpen: () => void; onDrawerClose: () => void;
+  isDrawerOpen: boolean;
+  onDrawerOpen: () => void;
+  onDrawerClose: () => void;
 }
 
 export const DetailDrawer = ({
-  emptyStateText, EmptyStateIcon,
-  content, actions,
+  emptyStateText,
+  EmptyStateIcon,
+  content,
+  actions,
   drawerTitle,
-  isDrawerOpen, onDrawerClose,
+  isDrawerOpen,
+  onDrawerClose,
 }: DetailDrawerProps) => {
   const isLgScreen = useMediaQuery("(min-width: 1200px)");
 
@@ -44,12 +51,15 @@ export const DetailDrawer = ({
       {!isLgScreen && (
         <Drawer
           title={
-            <Text fw={600} size="lg">{drawerTitle}</Text>
+            <Text fw={600} size="lg">
+              {drawerTitle}
+            </Text>
           }
-          size={"85%"}
           position="right"
           opened={isDrawerOpen}
           onClose={onDrawerClose}
+          h={"100%"}
+          padding={10}
         >
           {content}
           {actions}

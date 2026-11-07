@@ -11,15 +11,16 @@ import type { Mode } from "../model/types";
 import { useForm, Controller } from "react-hook-form";
 import { loginSchema, type LoginFormData } from "../model/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PhoneInput } from "@/06-shared/ui/PhoneInput";
-import { useLogin } from "../model/useLogin";
+import { PhoneInput } from "@/06-shared/ui";
+import { useLogin } from "../model/hooks";
+import { getErrorMessage } from "@/06-shared/utils";
 
 interface LoginFormProps {
   onSwitchToRegister: (mode: Mode) => void;
 }
 
 export const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
-  const { mutate, isPending, isError } = useLogin();
+  const { mutate, isPending, isError, error } = useLogin();
 
   const {
     register,
@@ -62,7 +63,7 @@ export const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
           {isError && (
             <Alert variant="light" color="red" icon={<AlertCircle size={16} />}>
               <Text c={"#C92A2A"} fw={500} size="sm">
-                Неверный телефон или пароль
+                {getErrorMessage(error)}
               </Text>
             </Alert>
           )}

@@ -14,4 +14,5 @@ export interface InfoTableProps {
   totalPages: number;
   currentPage: number;
   onPageChange: (newPage: number) => void;
+  isContentLoading: boolean;
 }

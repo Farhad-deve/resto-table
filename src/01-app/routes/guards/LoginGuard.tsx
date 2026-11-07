@@ -1,5 +1,4 @@
-import { homeByRole, useMe } from "@/05-entities/user";
-import { selectAccessToken } from "@/05-entities/user";
+import { homeByRole, useMe, selectAccessToken } from "@/05-entities/user";
 import { LoadingPage } from "@/02-pages/Loading";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router";

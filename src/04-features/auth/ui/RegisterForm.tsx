@@ -12,15 +12,16 @@ import { AlertCircle } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { registerSchema, type RegisterFormData } from "../model/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "../model/useRegister";
-import { PhoneInput } from "@/06-shared/ui/PhoneInput";
+import { useRegister } from "../model/hooks";
+import { PhoneInput } from "@/06-shared/ui";
+import { getErrorMessage } from "@/06-shared/utils";
 
 interface RegisterFormProps {
   onSwitchToLogin: (mode: Mode) => void;
 }
 
 export const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
-  const { mutate, isPending, isError } = useRegister(() =>
+  const { mutate, isPending, isError, error } = useRegister(() =>
     onSwitchToLogin("login"),
   );
 
@@ -94,7 +95,7 @@ export const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
           {isError && (
             <Alert variant="light" color="red" icon={<AlertCircle size={16} />}>
               <Text c={"#C92A2A"} fw={500} size="sm">
-                Неверный телефон или пароль
+                {getErrorMessage(error)}
               </Text>
             </Alert>
           )}

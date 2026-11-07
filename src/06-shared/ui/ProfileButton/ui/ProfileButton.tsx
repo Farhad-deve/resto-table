@@ -1,7 +1,6 @@
 import { Avatar, Group, Stack, Text } from "@mantine/core";
 import type { ReactElement } from "react";
 
-
 type User = {
   first_name: string;
   last_name: string;
@@ -37,7 +36,6 @@ export const ProfileButton = ({ user, rightSection }: ProfileButtonProps) => {
               : user?.role === "restaurant_admin"
                 ? "Администратор"
                 : "Склад"}
-            {/* Платформа | Администратор | Склад */}
           </Text>
         </Stack>
       </Group>

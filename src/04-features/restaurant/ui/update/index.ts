@@ -1,0 +1,1 @@
+export { UpdateRestaurantButton } from './UpdateRestaurantButton';

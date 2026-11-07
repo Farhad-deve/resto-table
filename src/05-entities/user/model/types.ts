@@ -24,3 +24,14 @@ export interface User {
     restaurant: WhichRestaurant | null;
 };
 
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+}
+
+export interface UpdateMe {
+    first_name: string;
+    last_name: string;
+    phone_number: string;
+    email: string | null;
+}

@@ -2,6 +2,7 @@ import {
   Group,
   Pagination,
   ScrollArea,
+  Skeleton,
   Stack,
   Table,
   Text,
@@ -10,14 +11,10 @@ import type { InfoTableProps } from "../model/types";
 import { Store } from "lucide-react";
 
 export const InfoTable = ({
-  bodyRows,
-  headerRowsArray,
-  fromItems,
-  toItems,
-  totalItems,
-  totalPages,
-  currentPage,
-  onPageChange,
+  bodyRows, headerRowsArray,
+  fromItems, toItems, totalItems,
+  totalPages, currentPage, onPageChange,
+  isContentLoading,
 }: InfoTableProps) => {
   return (
     <ScrollArea
@@ -48,10 +45,31 @@ export const InfoTable = ({
             </Table.Tr>
           </Table.Thead>
 
-          <Table.Tbody>{bodyRows}</Table.Tbody>
+          <Table.Tbody>
+            {isContentLoading ? (
+              <Table.Tr>
+                <Table.Td>
+                  <Group>
+                    <Skeleton h={40} w={40} radius="xl" />
+                    <Skeleton w={150} h={20} />
+                  </Group>
+                </Table.Td>
+
+                <Table.Td>
+                  <Skeleton w={70} h={20} />
+                </Table.Td>
+
+                <Table.Td>
+                  <Skeleton w={70} h={20} />
+                </Table.Td>
+              </Table.Tr>
+            ) : (
+              bodyRows
+            )}
+          </Table.Tbody>
         </Table>
 
-        {totalItems === 0 && (
+        {isContentLoading === false && totalItems === 0 && (
           <Stack gap={8} align="center" justify="center" h={340}>
             <Store color="gray" size={20} />
             <Text c={"gray"} fw={600} size="md">
@@ -64,7 +82,7 @@ export const InfoTable = ({
           <Group
             justify="space-between"
             p={"md"}
-            className="border-t border-gray-200 sticky bottom-0 z-10 bg-white"
+            className="border-t border-gray-100 sticky bottom-0 z-10 bg-white"
           >
             <Text size="xs" c={"gray"}>
               <span>{fromItems}</span>-<span>{toItems}</span> из {totalItems}

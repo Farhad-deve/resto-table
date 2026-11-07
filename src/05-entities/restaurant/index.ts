@@ -1,4 +1,8 @@
-export { useSuperAStats } from "./model/useSuperAStats";
-export { useRestaurants } from "./model/useRestaurants";
-export { useDeleteRestaurant } from "./model/useDeleteRestaurant";
-export type { Restaurant } from './model/types';
+export {
+  useSuperAStats,
+  useRestaurants,
+  useCreateRestaurant,
+  useDeleteRestaurant,
+  useUpdateRestaurant,
+} from "./model/hooks";
+export type { RestaurantWithAdmin, CreateRestaurant } from "./model/types";

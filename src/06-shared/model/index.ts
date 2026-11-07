@@ -1,0 +1,1 @@
+export type { CommonGetResponse } from './types'

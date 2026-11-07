@@ -1,8 +1,8 @@
-import { ConfirmModal } from "@/06-shared/ui/ConfirmModal";
+import { ConfirmModal } from "@/06-shared/ui";
 import { ActionIcon, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { LogOut } from "lucide-react";
-import { useLogout } from "../model/useLogout";
+import { useLogout } from "../model/hooks";
 
 interface LogoutButtonProps {
   logoutWithText?: boolean;
@@ -24,8 +24,7 @@ export const LogoutButton = ({ logoutWithText } : LogoutButtonProps) => {
         </ActionIcon>
       )}
 
-      <ConfirmModal
-        title="Выйти из аккаунта?"
+      <ConfirmModal title="Выйти из аккаунта?"
         description="Вы выйдете из системы на этом устройстве. Чтобы продолжить работу, нужно будет войти снова."
         confirmButtonLabel="Выйти"
         opened={opened}

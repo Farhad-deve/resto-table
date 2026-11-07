@@ -1,14 +1,10 @@
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from "@/06-shared/config";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { LoginResponse } from "./types";
 
 export interface TokenState {
   access: string | null;
   refresh: string | null;
-}
-
-interface LoginResponse {
-  access: string;
-  refresh: string;
 }
 
 const initialState: TokenState = {

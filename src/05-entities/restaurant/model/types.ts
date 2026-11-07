@@ -20,18 +20,23 @@ export interface Restaurant {
   is_active: boolean;
   start_time: string;
   end_time: string;
-  admin: Admin | null;
 }
 
-export interface RestaurantList {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Restaurant[];
+export interface RestaurantWithAdmin extends Restaurant {
+  admin: Admin | null;
 }
 
 export interface RestaurantParameters {
   search?: string;
   is_active?: boolean;
   page?: number;
+}
+
+export interface CreateRestaurant {
+  name: string;
+  address: string;
+  phone: string;
+  is_active?: boolean;
+  start_time: string;
+  end_time: string;
 }
