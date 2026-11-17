@@ -8,13 +8,12 @@ import {
   Text,
 } from "@mantine/core";
 import type { InfoTableProps } from "../model/types";
-import { Store } from "lucide-react";
 
 export const InfoTable = ({
   bodyRows, headerRowsArray,
   fromItems, toItems, totalItems,
   totalPages, currentPage, onPageChange,
-  isContentLoading,
+  isContentLoading, emptyStateIcon, emptyStateText
 }: InfoTableProps) => {
   return (
     <ScrollArea
@@ -71,9 +70,9 @@ export const InfoTable = ({
 
         {isContentLoading === false && totalItems === 0 && (
           <Stack gap={8} align="center" justify="center" h={340}>
-            <Store color="gray" size={20} />
+            {emptyStateIcon}
             <Text c={"gray"} fw={600} size="md">
-              Ничего не найдено
+              {emptyStateText}
             </Text>
           </Stack>
         )}

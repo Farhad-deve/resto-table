@@ -21,7 +21,7 @@ export const SidebarLink = ({ path, label, collapsed, icon: Icon, badge } : Side
           : "hover:bg-teal-50 rounded-lg text-[#495057]"
       }
     >
-      <Group justify={`${!collapsed ? "space-between" : "center"}`} style={{ position: "relative" }} p={"xs"}>
+      <Group justify={`${!collapsed ? "space-between" : "center"}`} style={{ position: "relative" }} px="xs" py="sm">
         <Group gap={12}>
           <Icon size={16} />
           {!collapsed && (

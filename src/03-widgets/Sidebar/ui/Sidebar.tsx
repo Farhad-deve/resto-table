@@ -17,11 +17,12 @@ import {
 import { SidebarLink } from "./SidebarLink";
 import { LogoutButton } from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
-import { ProfileButton } from "@/06-shared/ui/ProfileButton";
-import { useSuperAStats } from "@/05-entities/restaurant";
+import { ProfileButton } from "@/06-shared/ui";
+import { useSuperAStats } from "@/05-entities/superadmin";
 import { useDisclosure } from "@mantine/hooks";
 import { CancelButton, ChangeModal } from "@/06-shared/ui";
 import { ChangePasswordForm, ChangeUserDetailForm } from "@/04-features/user";
+import { useRestAdminStats } from "@/05-entities/restaurantAdmin";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -29,32 +30,20 @@ interface SidebarProps {
 
 export const Sidebar = ({ collapsed }: SidebarProps) => {
   const { data: user } = useMe();
-  const { data: stats } = useSuperAStats();
-  const [
-    changeModalOpened,
-    { open: openChangeModal, close: closeChangeModal },
-  ] = useDisclosure();
+  const runInSuperA = user?.role === "superadmin";
+  const runInRestAdmin = user?.role === "restaurant_admin";
+  const { data: stats } = useSuperAStats(runInSuperA);
+  const { data: restAdminStats } = useRestAdminStats(user?.restaurant?.id, runInRestAdmin);
+  const [changeModalOpened, { open: openChangeModal, close: closeChangeModal }] = useDisclosure();
 
-  const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
-    (link) => link.category === "Зал",
-  );
-  const RestaurantAdminControlLinks = RestaurantAdminLinks.filter(
-    (link) => link.category === "Управление",
-  );
+  const RestaurantAdminHallLinks = RestaurantAdminLinks.filter((link) => link.category === "Зал");
+  const RestaurantAdminControlLinks = RestaurantAdminLinks.filter((link) => link.category === "Управление");
 
-  const showBadge = ({
-    badgeIndicatorColor,
-    badgeContent,
-  }: {
-    badgeIndicatorColor: string;
-    badgeContent: string;
-  }) => {
-    if (!stats?.inactive || stats.inactive <= 0) return null;
-
+  const showBadge = ({ indicatorColor, badgeContent, contentColor, bgColor }: { indicatorColor: string; badgeContent: string; contentColor: string; bgColor: string; }) => {
     if (collapsed) {
       return (
         <Indicator
-          color={badgeIndicatorColor}
+          color={indicatorColor}
           size={6}
           processing
           style={{ position: "absolute", top: "0.5rem", right: "1.3rem" }}
@@ -65,8 +54,8 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
     }
 
     return (
-      <Badge color={badgeIndicatorColor} size="xs">
-        <Text c={"dark"} fw={500} size="xs" tt={"lowercase"}>
+      <Badge color={bgColor} size="sm">
+        <Text c={contentColor} fw={600} size="xs" tt={"lowercase"}>
           {badgeContent}
         </Text>
       </Badge>
@@ -74,79 +63,94 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
   };
 
   return (
-    <div className={`h-full`}>
-      <Stack h={"100%"} justify="space-between">
-        <Stack h={"100%"} flex={1}>
-          <Stack gap={4}>
-            <Group p={"xs"} gap={"xs"} justify={`${collapsed && "center"}`}>
-              <img
-                src="/favicon.svg"
-                alt="RestoTable"
-                className="pointer-events-none"
-              />
-              {!collapsed && (
-                <Text fw={600}>
-                  Resto
-                  <Text component="span" c={"teal.8"} fw={600}>
-                    Table
-                  </Text>
+    <Stack h={"100%"} justify="space-between">
+      <Stack h={"100%"} flex={1}>
+        <Stack gap={4}>
+          <Group p={"xs"} gap={"xs"} justify={`${collapsed && "center"}`}>
+            <img src="/favicon.svg" alt="RestoTable" className="pointer-events-none" />
+            {!collapsed && (
+              <Text fw={600}>
+                Resto
+                <Text component="span" c={"teal.8"} fw={600}>
+                  Table
                 </Text>
-              )}
-            </Group>
+              </Text>
+            )}
+          </Group>
 
-            <Group
-              gap={8}
-              className="border-[1.5px] border-[#DEE2E6]"
-              bdrs={"sm"}
-              py={5}
-              px={"xs"}
-              hidden={collapsed}
-            >
-              <Box bg={"gray.1"} c={"gray.5"} p={8} bdrs={"sm"}>
-                {user?.role === "superadmin" ? (
-                  <Globe size={14} />
-                ) : user?.role === "restaurant_admin" ? (
-                  <Store size={14} />
-                ) : (
-                  <ShelvingUnit size={14} />
-                )}
-              </Box>
-
-              <Stack gap={0}>
-                <Text fw={600} size="sm">
-                  {user?.role === "superadmin"
-                    ? "Платформа"
-                    : user?.restaurant?.name}
-                </Text>
-                <Text size={"xs"} c={"gray.6"}>
-                  {user?.role === "superadmin"
-                    ? `${stats?.total} ресторанов`
-                    : user?.role === "restaurant_admin"
-                      ? "Администратор"
-                      : "Склад"}
-                </Text>
-              </Stack>
-            </Group>
-          </Stack>
-
-          <Stack gap={"xs"}>
-            <Text
-              c={"gray.5"}
-              fw={600}
-              size="xs"
-              lts={"1px"}
-              hidden={collapsed}
-            >
-              {user?.role === "superadmin"
-                ? "ПЛАТФОРМА"
-                : user?.role === "restaurant_admin"
-                  ? "ЗАЛ"
-                  : "СКЛАД"}
-            </Text>
-
-            <Stack gap={4}>
+          <Group
+            gap={8}
+            className="border-[1.5px] border-[#DEE2E6]"
+            bdrs={"sm"}
+            py={5}
+            px={"xs"}
+            hidden={collapsed}
+          >
+            <Box bg={"gray.1"} c={"gray.5"} p={8} bdrs={"sm"}>
               {user?.role === "superadmin" ? (
-                SuperAdminLinks.map((link) => (
+                <Globe size={14} />
+              ) : user?.role === "restaurant_admin" ? (
+                <Store size={14} />
+              ) : (
+                <ShelvingUnit size={14} />
+              )}
+            </Box>
+
+            <Stack gap={0}>
+              <Text fw={600} size="sm">
+                {user?.role === "superadmin"
+                  ? "Платформа"
+                  : user?.restaurant?.name}
+              </Text>
+              <Text size={"xs"} c={"gray.6"}>
+                {user?.role === "superadmin"
+                  ? `${stats?.total} ресторанов`
+                  : user?.role === "restaurant_admin"
+                    ? "Администратор"
+                    : "Склад"}
+              </Text>
+            </Stack>
+          </Group>
+        </Stack>
+
+        <Stack gap={"xs"}>
+          <Text
+            c={"gray.5"}
+            fw={600}
+            size="xs"
+            lts={"1px"}
+            hidden={collapsed}
+          >
+            {user?.role === "superadmin"
+              ? "ПЛАТФОРМА"
+              : user?.role === "restaurant_admin"
+                ? "ЗАЛ"
+                : "СКЛАД"}
+          </Text>
+
+          <Stack gap={4}>
+            {user?.role === "superadmin" ? (
+              SuperAdminLinks.map((link) => (
+                <SidebarLink
+                  key={link.id}
+                  path={link.path}
+                  label={link.label}
+                  icon={link.icon}
+                  collapsed={collapsed}
+                  badge={
+                    link.id === 1 && stats?.inactive && stats.inactive > 0 ?
+                    showBadge({
+                      bgColor: "#eee",
+                      indicatorColor: "#eee",
+                      badgeContent: `неакт. ${stats?.inactive}`,
+                      contentColor: "dark"
+                    }) : null
+                  }
+                />
+              ))
+            ) : user?.role === "restaurant_admin" ? (
+              <Stack gap={4}>
+                {RestaurantAdminHallLinks.map((link) => (
                   <SidebarLink
                     key={link.id}
                     path={link.path}
@@ -154,60 +158,70 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                     icon={link.icon}
                     collapsed={collapsed}
                     badge={
-                      link.id === 1 &&
-                      showBadge({
-                        badgeIndicatorColor: "#eee",
-                        badgeContent: `неакт. ${stats?.inactive}`,
-                      })
+                      restAdminStats ? (
+                        link.id === 2 ?
+                          showBadge({
+                            indicatorColor: "#79C790",
+                            bgColor: "#79C790",
+                            badgeContent: `${restAdminStats?.tables.occupied}/${restAdminStats?.tables.total}`,
+                            contentColor: "white"
+                        }) : link.id === 4 && restAdminStats.reservations.pending > 0 ?
+                          showBadge({
+                          indicatorColor: "#5f3dc4",
+                          bgColor: "#f3f0ff",
+                          badgeContent: `${restAdminStats?.reservations.pending}`,
+                          contentColor: "#5f3dc4"
+                        }) : null
+                      ) : null
                     }
                   />
-                ))
-              ) : user?.role === "restaurant_admin" ? (
-                <Stack gap={4}>
-                  {RestaurantAdminHallLinks.map((link) => (
-                    <SidebarLink
-                      key={link.id}
-                      path={link.path}
-                      label={link.label}
-                      icon={link.icon}
-                      collapsed={collapsed}
-                    />
-                  ))}
+                ))}
 
-                  {!collapsed && (
-                    <Text c={"gray.5"} fw={600} size="xs" lts={"1px"}>
-                      УПРАВЛЕНИЕ
-                    </Text>
-                  )}
+                {!collapsed && (
+                  <Text c={"gray.5"} fw={600} size="xs" lts={"1px"}>
+                    УПРАВЛЕНИЕ
+                  </Text>
+                )}
 
-                  {RestaurantAdminControlLinks.map((link) => (
-                    <SidebarLink
-                      key={link.id}
-                      path={link.path}
-                      label={link.label}
-                      icon={link.icon}
-                      collapsed={collapsed}
-                    />
-                  ))}
-                </Stack>
-              ) : (
-                StoreKeeperLinks.map((link) => (
+                {RestaurantAdminControlLinks.map((link) => (
                   <SidebarLink
                     key={link.id}
                     path={link.path}
                     label={link.label}
                     icon={link.icon}
                     collapsed={collapsed}
+                    badge={
+                      restAdminStats ? (
+                        link.id === 5 && restAdminStats.menu.stop_count > 0 &&
+                        showBadge({
+                            indicatorColor: "#c92a2a",
+                            bgColor: "#fff5f5",
+                            badgeContent: `стоп ${restAdminStats.menu.stop_count}`,
+                            contentColor: "#c92a2a"
+                        })
+                      ) : null
+                    }
                   />
-                ))
-              )}
-            </Stack>
+                ))}
+              </Stack>
+            ) : (
+              StoreKeeperLinks.map((link) => (
+                <SidebarLink
+                  key={link.id}
+                  path={link.path}
+                  label={link.label}
+                  icon={link.icon}
+                  collapsed={collapsed}
+                  />
+              ))
+            )}
           </Stack>
         </Stack>
+      </Stack>
 
-        {collapsed ? (
-          <Stack align="center">
-            <Avatar
+      {collapsed ? (
+        <Stack align="center">
+          <Avatar
               onClick={openChangeModal}
               color="teal.8"
               className="cursor-pointer"
@@ -216,22 +230,25 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                 {user?.first_name.charAt(0).toUpperCase()}
                 {user?.last_name.charAt(0).toUpperCase()}
               </Text>
-            </Avatar>
+          </Avatar>
 
-            <LogoutButton />
-          </Stack>
-        ) : (
-          <Group className="border-t border-[#E9ECEF] rounded-lg">
+          <LogoutButton />
+        </Stack>
+      ) : (
+        <Group
+            justify="space-between"
+            className="border-t border-[#E9ECEF] rounded-lg"
+          >
             <Box onClick={openChangeModal}>
               <ProfileButton user={user} />
             </Box>
 
             <LogoutButton />
-          </Group>
-        )}
+        </Group>
+      )}
 
-        <ChangeModal
-          title="Профиль"
+      <ChangeModal
+        title="Профиль"
           opened={changeModalOpened}
           closeModal={closeChangeModal}
           content={
@@ -261,9 +278,8 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                 </Group>
               </Group>
             </ScrollArea>
-          }
-        />
-      </Stack>
-    </div>
+        }
+      />
+    </Stack>
   );
 };

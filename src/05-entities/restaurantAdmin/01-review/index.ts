@@ -1,0 +1,1 @@
+export { useRestAdminStats } from './model/hooks';

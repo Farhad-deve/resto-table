@@ -34,3 +34,11 @@ export const useChangePasswordMe = () => {
     }
   })
 };
+
+export const useMyRestaurantId = () => {
+  const { data: user } = useMe();
+  if (!user?.restaurant) throw new Error("No restaurant");
+  return user.restaurant.id;
+};
+
+

@@ -2,11 +2,11 @@ import { createBrowserRouter, Navigate } from "react-router";
 import App from "../App";
 
 import { AdminPanelLayout, CustomerLayout, KitchenLayout, WaiterLayout } from "../layouts";
-import { LogRegPage } from "@/02-pages/auth";
-import { SuperAdminRestaurantsPage } from "@/02-pages/superAdmin";
-import { SuperAdminAdminsPage } from "@/02-pages/superAdmin";
-import { NotFoundPage } from "@/02-pages/NotFound";
 import {
+  // SuperAdmin
+  SuperAdminRestaurantsPage, SuperAdminAdminsPage,
+
+  // RestaurantAdmin
   AdminEmployeesPage,
   AdminMenuPage,
   AdminOrdersPage,
@@ -14,18 +14,28 @@ import {
   AdminReviewPage,
   AdminStoragePage,
   AdminTablesPage,
-} from "@/02-pages/restaurantAdmin";
-import {
-  StorageIncomePage,
-  StorageRemainsPage,
-  StorageReviewPage,
-} from "@/02-pages/storeKeeper";
 
-import { RoleGuard } from "./guards/RoleGuard";
-import { LoginGuard } from "./guards/LoginGuard";
+  // Storekeeper
+  StorageIncomePage, StorageRemainsPage, StorageReviewPage,
+
+  // Waiter
+  WaiterOneTablePage, WaiterTablesPage,
+
+  // Kitchen
+
+
+  // Customer
+  CustomerReservationsPage, CustomerRestaurantsPage,
+
+  // Auth
+  LogRegPage,
+
+  // Not Found 
+  NotFoundPage
+} from "@/02-pages";
+
+import { RoleGuard, LoginGuard } from "./guards";
 import type { RouteHandle } from "@/03-widgets/Header";
-import { WaiterOneTablePage, WaiterTablesPage } from "@/02-pages/waiter";
-import { CustomerReservationsPage, CustomerRestaurantsPage } from "@/02-pages/customer";
 
 export const router = createBrowserRouter([
   {

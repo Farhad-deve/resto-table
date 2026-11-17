@@ -1,3 +1,4 @@
+
 import type { ReactNode } from "react";
 
 type HeaderRow = {
@@ -15,4 +16,6 @@ export interface InfoTableProps {
   currentPage: number;
   onPageChange: (newPage: number) => void;
   isContentLoading: boolean;
+  emptyStateText: string;
+  emptyStateIcon: ReactNode;
 }

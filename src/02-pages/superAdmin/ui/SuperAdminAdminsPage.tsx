@@ -1,9 +1,9 @@
 import { ActionIcon, Avatar, Grid, Group, Stack, Table, Text } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useState } from "react";
-import { Shield, X } from "lucide-react";
-import { CreateAdminButton, DeleteAdminButton, UpdateAdminButton, UpdatePasswordAdminButton } from "@/04-features/admin";
-import { useAdmins } from "@/05-entities/admin";
+import { Shield, UserX, X } from "lucide-react";
+import { CreateAdminButton, DeleteAdminButton, UpdateAdminButton, UpdatePasswordAdminButton } from "@/04-features/superadmin";
+import { useAdmins } from "@/05-entities/superadmin";
 import { formatPhoneNumber, calculatePageItems, } from "@/06-shared/utils";
 import { InfoTable, DetailDrawer } from "@/06-shared/ui";
 import { AdminsTableHeaderData } from "../config/TableData";
@@ -88,6 +88,8 @@ export const SuperAdminAdminsPage = () => {
             currentPage={page}
             onPageChange={setPage}
             isContentLoading={isAdminsPending}
+            emptyStateIcon={<UserX color="gray" size={20} />}
+            emptyStateText="Нет администраторов"
           />
         </Grid.Col>
 

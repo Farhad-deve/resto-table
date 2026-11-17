@@ -21,9 +21,9 @@ export const RestaurantAdminLinks = [
   { id: 2, category: "Зал", label: "Столы", path: "/admin/tables", icon: Armchair },
   { id: 3, category: "Зал", label: "Заказы", path: "/admin/orders", icon: ReceiptText },
   { id: 4, category: "Зал", label: "Брони", path: "/admin/reservations", icon: CalendarDays },
-  { id: 6, category: "Управление", label: "Меню", path: "/admin/menu", icon: Utensils },
-  { id: 7, category: "Управление", label: "Склад", path: "/admin/storage", icon: ShelvingUnit },
-  { id: 9, category: "Управление", label: "Сотрудники", path: "/admin/employees", icon: IdCard },
+  { id: 5, category: "Управление", label: "Меню", path: "/admin/menu", icon: Utensils },
+  { id: 6, category: "Управление", label: "Склад", path: "/admin/storage", icon: ShelvingUnit },
+  { id: 7, category: "Управление", label: "Сотрудники", path: "/admin/employees", icon: IdCard },
 ];
 
 export const StoreKeeperLinks = [

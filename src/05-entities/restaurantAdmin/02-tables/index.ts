@@ -1,0 +1,1 @@
+export { useTables, useCreateTable } from './model/hooks';

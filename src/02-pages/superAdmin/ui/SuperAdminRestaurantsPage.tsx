@@ -26,8 +26,11 @@ import {
   DeleteRestaurantButton,
   ToggleActiveRestaurantButton,
   UpdateRestaurantButton,
-} from "@/04-features/restaurant";
-import { useRestaurants, useSuperAStats } from "@/05-entities/restaurant";
+} from "@/04-features/superadmin";
+import {
+  useRestaurants,
+  useSuperAStats,
+} from "@/05-entities/superadmin";
 import { InfoTable, DetailDrawer } from "@/06-shared/ui";
 import { formatPhoneNumber, calculatePageItems } from "@/06-shared/utils";
 import { RestaurantsTableHeaderData } from "../config/TableData";
@@ -54,16 +57,13 @@ export const SuperAdminRestaurantsPage = () => {
       search: debouncedSearch,
     },
   );
-  const { data: stats, isLoading: isStatsLoading } = useSuperAStats();
+  const { data: stats, isLoading: isStatsLoading } = useSuperAStats(true);
 
-  const [drawerOpened, { open: openDrawer, close: closeDrawer }] =
-    useDisclosure();
+  const [drawerOpened, { open: openDrawer, close: closeDrawer }] = useDisclosure();
 
   const isLgScreen = useMediaQuery("(min-width: 1200px)");
 
-  const selectedRestaurant = restaurants?.results.find(
-    (rest) => rest.id === selectedRestaurantId,
-  );
+  const selectedRestaurant = restaurants?.results.find((rest) => rest.id === selectedRestaurantId);
 
   const bodyRows = restaurants?.results.map((rest) => (
     <Table.Tr
@@ -179,13 +179,10 @@ export const SuperAdminRestaurantsPage = () => {
         <CreateRestaurantButton />
       </Group>
 
-      {isStatsLoading ? (
-        <SkeletonLoading />
-      ) : (
+      {isStatsLoading ? <SkeletonLoading /> : (
         <Stack>
-          <Stack>
-            <Grid>
-              <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
+          <Grid>
+            <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
                 <Card withBorder h={"100%"}>
                   <Stack gap={8}>
                     <Group gap={10}>
@@ -197,11 +194,11 @@ export const SuperAdminRestaurantsPage = () => {
                     <Title fw={600}>{stats?.total}</Title>
                   </Stack>
                 </Card>
-              </Grid.Col>
+            </Grid.Col>
 
-              <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
-                <Card withBorder h={"100%"}>
-                  <Stack gap={8}>
+            <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
+              <Card withBorder h={"100%"}>
+                <Stack gap={8}>
                     <Group gap={10}>
                       <CircleCheck size={16} color="teal" />
                       <Text size="xs" c={"gray"} fw={500}>
@@ -211,12 +208,12 @@ export const SuperAdminRestaurantsPage = () => {
                     <Title c={"teal"} fw={600}>
                       {stats?.active}
                     </Title>
-                  </Stack>
-                </Card>
-              </Grid.Col>
+                </Stack>
+              </Card>
+            </Grid.Col>
 
-              <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
-                <Card withBorder h={"100%"}>
+            <Grid.Col span={{ base: 12, xs: 6, sm: 4 }}>
+              <Card withBorder h={"100%"}>
                   <Stack gap={8}>
                     <Group gap={10}>
                       <Pause size={16} />
@@ -228,10 +225,9 @@ export const SuperAdminRestaurantsPage = () => {
                       {stats?.inactive}
                     </Title>
                   </Stack>
-                </Card>
-              </Grid.Col>
-            </Grid>
-          </Stack>
+              </Card>
+            </Grid.Col>
+          </Grid>
 
           <Stack>
             <Group justify="space-between">
@@ -284,6 +280,8 @@ export const SuperAdminRestaurantsPage = () => {
                   totalPages={TotalPages}
                   onPageChange={setPage}
                   isContentLoading={isRestaurantsPending}
+                  emptyStateIcon={<Store color="gray" size={20} />}
+                  emptyStateText="Ничего не найдено"
                 />
               </Grid.Col>
 
@@ -462,6 +460,7 @@ export const SuperAdminRestaurantsPage = () => {
                           restaurantName={selectedRestaurant.name}
                           restaurantId={selectedRestaurant.id}
                           isActive={selectedRestaurant.is_active}
+                          onSave={closeDrawer}
                         />
                       )}
 

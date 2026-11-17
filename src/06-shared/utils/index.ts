@@ -4,3 +4,4 @@ export { formatPhoneNumber } from './formatPhoneNumber';
 export { calculatePageItems } from './calculatePageItems';
 export { getErrorMessage } from './getErrorMessage';
 export { removeCountryCode } from './removeCountryCode';
+export { formatToElapsedTime } from './formatToElapsedTime';
