@@ -26,11 +26,11 @@ import {
   DeleteRestaurantButton,
   ToggleActiveRestaurantButton,
   UpdateRestaurantButton,
-} from "@/04-features/superadmin";
+} from "@/04-features/restaurant";
 import {
   useRestaurants,
   useSuperAStats,
-} from "@/05-entities/superadmin";
+} from "@/05-entities/restaurant";
 import { InfoTable, DetailDrawer } from "@/06-shared/ui";
 import { formatPhoneNumber, calculatePageItems } from "@/06-shared/utils";
 import { RestaurantsTableHeaderData } from "../config/TableData";
@@ -150,6 +150,7 @@ export const SuperAdminRestaurantsPage = () => {
     page,
     restaurants?.count ?? 0,
     restaurants?.results.length ?? 0,
+    10
   );
 
   useEffect(() => {

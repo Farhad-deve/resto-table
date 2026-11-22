@@ -2,8 +2,8 @@ import { ActionIcon, Avatar, Grid, Group, Stack, Table, Text } from "@mantine/co
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { useState } from "react";
 import { Shield, UserX, X } from "lucide-react";
-import { CreateAdminButton, DeleteAdminButton, UpdateAdminButton, UpdatePasswordAdminButton } from "@/04-features/superadmin";
-import { useAdmins } from "@/05-entities/superadmin";
+import { CreateAdminButton, DeleteAdminButton, UpdateAdminButton, UpdatePasswordAdminButton } from "@/04-features/admin";
+import { useAdmins } from "@/05-entities/admin";
 import { formatPhoneNumber, calculatePageItems, } from "@/06-shared/utils";
 import { InfoTable, DetailDrawer } from "@/06-shared/ui";
 import { AdminsTableHeaderData } from "../config/TableData";
@@ -58,6 +58,7 @@ export const SuperAdminAdminsPage = () => {
     page,
     admins?.count ?? 0,
     admins?.results.length ?? 0,
+    10
   );
 
   return (

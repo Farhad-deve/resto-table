@@ -1,9 +1,10 @@
 import { SkeletonLoading } from "@/03-widgets/SkeletonLoading";
-import { useRestAdminStats } from "@/05-entities/restaurantAdmin";
-import { useOrders } from "@/05-entities/restaurantAdmin/03-orders";
+import { useRestAdminStats } from "@/05-entities/review";
+import { useOrders } from "@/05-entities/orders";
 import { useMe, useMyRestaurantId } from "@/05-entities/user";
 import { formatPrice, formatToElapsedTime } from "@/06-shared/utils";
 import {
+  Badge,
   Box,
   Card,
   Grid,
@@ -19,6 +20,7 @@ import {
   Armchair,
   Ban,
   Banknote,
+  BellRing,
   CalendarCheck2Icon,
   CalendarClock,
   ChevronRight,
@@ -33,7 +35,7 @@ export const AdminReviewPage = () => {
   const { data: user } = useMe();
   const restId = useMyRestaurantId();
   const { data: restAdminStats, isPending: isRestAdminStatsPending } = useRestAdminStats(restId, true);
-  const { data: openOrders, isPending: isOpenOrdersPending } = useOrders(restId, { status: "open" });
+  const { data: openOrders, isPending: isOpenOrdersPending } = useOrders(restId, { status: "open", page: 1 });
   const navigate = useNavigate();
 
   const todaysDate = new Date().toLocaleDateString("ru-RU", {
@@ -73,6 +75,8 @@ export const AdminReviewPage = () => {
   const openOrdersCount = openOrders?.count ?? 0;
   const first5OpenOrders = openOrders?.results.slice(0, 5).length ?? 0;
   const remainingOpenOrders = openOrdersCount - first5OpenOrders;
+
+  
 
   return (
     <Stack>
@@ -437,9 +441,16 @@ export const AdminReviewPage = () => {
                                   </Stack>
                                 </Group>
 
-                                <Text size="xs" fw={500}>
-                                  {formatPrice(Number(order.total_order_price))} сум
-                                </Text>
+                                <Group gap={10}>
+                                  {order.order_items.filter((o) => o.status === "ready").length > 0 && (
+                                    <Badge color="green.1" c="teal.9" size="xs" leftSection={<BellRing size={10} />}>
+                                      {order.order_items.filter((o) => o.status === "ready").length}
+                                    </Badge>
+                                  )}
+                                  <Text size="xs" fw={500}>
+                                    {formatPrice(Number(order.total_order_price))} сум
+                                  </Text>
+                                </Group>
                               </Group>
                             </Table.Td>
                           </Table.Tr>

@@ -2,8 +2,8 @@ export const calculatePageItems = (
   page: number,
   dataCount: number,
   currentDataLength: number,
+  itemsPerPage: number,
 ) => {
-  const itemsPerPage = 10;
   const TotalPages = Math.ceil((dataCount ?? 0) / itemsPerPage);
 
   const fromItemsIndex =

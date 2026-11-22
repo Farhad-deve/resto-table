@@ -18,11 +18,11 @@ import { SidebarLink } from "./SidebarLink";
 import { LogoutButton } from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
 import { ProfileButton } from "@/06-shared/ui";
-import { useSuperAStats } from "@/05-entities/superadmin";
+import { useSuperAStats } from "@/05-entities/restaurant";
 import { useDisclosure } from "@mantine/hooks";
 import { CancelButton, ChangeModal } from "@/06-shared/ui";
 import { ChangePasswordForm, ChangeUserDetailForm } from "@/04-features/user";
-import { useRestAdminStats } from "@/05-entities/restaurantAdmin";
+import { useRestAdminStats } from "@/05-entities/review";
 
 interface SidebarProps {
   collapsed: boolean;
@@ -33,13 +33,33 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
   const runInSuperA = user?.role === "superadmin";
   const runInRestAdmin = user?.role === "restaurant_admin";
   const { data: stats } = useSuperAStats(runInSuperA);
-  const { data: restAdminStats } = useRestAdminStats(user?.restaurant?.id, runInRestAdmin);
-  const [changeModalOpened, { open: openChangeModal, close: closeChangeModal }] = useDisclosure();
+  const { data: restAdminStats } = useRestAdminStats(
+    user?.restaurant?.id,
+    runInRestAdmin,
+  );
+  const [
+    changeModalOpened,
+    { open: openChangeModal, close: closeChangeModal },
+  ] = useDisclosure();
 
-  const RestaurantAdminHallLinks = RestaurantAdminLinks.filter((link) => link.category === "Зал");
-  const RestaurantAdminControlLinks = RestaurantAdminLinks.filter((link) => link.category === "Управление");
+  const RestaurantAdminHallLinks = RestaurantAdminLinks.filter(
+    (link) => link.category === "Зал",
+  );
+  const RestaurantAdminControlLinks = RestaurantAdminLinks.filter(
+    (link) => link.category === "Управление",
+  );
 
-  const showBadge = ({ indicatorColor, badgeContent, contentColor, bgColor }: { indicatorColor: string; badgeContent: string; contentColor: string; bgColor: string; }) => {
+  const showBadge = ({
+    indicatorColor,
+    badgeContent,
+    contentColor,
+    bgColor,
+  }: {
+    indicatorColor: string;
+    badgeContent: string;
+    contentColor: string;
+    bgColor: string;
+  }) => {
     if (collapsed) {
       return (
         <Indicator
@@ -67,7 +87,11 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
       <Stack h={"100%"} flex={1}>
         <Stack gap={4}>
           <Group p={"xs"} gap={"xs"} justify={`${collapsed && "center"}`}>
-            <img src="/favicon.svg" alt="RestoTable" className="pointer-events-none" />
+            <img
+              src="/favicon.svg"
+              alt="RestoTable"
+              className="pointer-events-none"
+            />
             {!collapsed && (
               <Text fw={600}>
                 Resto
@@ -114,13 +138,7 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
         </Stack>
 
         <Stack gap={"xs"}>
-          <Text
-            c={"gray.5"}
-            fw={600}
-            size="xs"
-            lts={"1px"}
-            hidden={collapsed}
-          >
+          <Text c={"gray.5"} fw={600} size="xs" lts={"1px"} hidden={collapsed}>
             {user?.role === "superadmin"
               ? "ПЛАТФОРМА"
               : user?.role === "restaurant_admin"
@@ -138,13 +156,14 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                   icon={link.icon}
                   collapsed={collapsed}
                   badge={
-                    link.id === 1 && stats?.inactive && stats.inactive > 0 ?
-                    showBadge({
-                      bgColor: "#eee",
-                      indicatorColor: "#eee",
-                      badgeContent: `неакт. ${stats?.inactive}`,
-                      contentColor: "dark"
-                    }) : null
+                    link.id === 1 && stats?.inactive && stats.inactive > 0
+                      ? showBadge({
+                          bgColor: "#eee",
+                          indicatorColor: "#eee",
+                          badgeContent: `неакт. ${stats?.inactive}`,
+                          contentColor: "dark",
+                        })
+                      : null
                   }
                 />
               ))
@@ -158,21 +177,24 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                     icon={link.icon}
                     collapsed={collapsed}
                     badge={
-                      restAdminStats ? (
-                        link.id === 2 ?
-                          showBadge({
-                            indicatorColor: "#79C790",
-                            bgColor: "#79C790",
-                            badgeContent: `${restAdminStats?.tables.occupied}/${restAdminStats?.tables.total}`,
-                            contentColor: "white"
-                        }) : link.id === 4 && restAdminStats.reservations.pending > 0 ?
-                          showBadge({
-                          indicatorColor: "#5f3dc4",
-                          bgColor: "#f3f0ff",
-                          badgeContent: `${restAdminStats?.reservations.pending}`,
-                          contentColor: "#5f3dc4"
-                        }) : null
-                      ) : null
+                      restAdminStats
+                        ? link.id === 2
+                          ? showBadge({
+                              indicatorColor: "#79C790",
+                              bgColor: "#79C790",
+                              badgeContent: `${restAdminStats?.tables.occupied}/${restAdminStats?.tables.total}`,
+                              contentColor: "white",
+                            })
+                          : link.id === 4 &&
+                              restAdminStats.reservations.pending > 0
+                            ? showBadge({
+                                indicatorColor: "#5f3dc4",
+                                bgColor: "#f3f0ff",
+                                badgeContent: `${restAdminStats?.reservations.pending}`,
+                                contentColor: "#5f3dc4",
+                              })
+                            : null
+                        : null
                     }
                   />
                 ))}
@@ -191,15 +213,16 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                     icon={link.icon}
                     collapsed={collapsed}
                     badge={
-                      restAdminStats ? (
-                        link.id === 5 && restAdminStats.menu.stop_count > 0 &&
-                        showBadge({
+                      restAdminStats
+                        ? link.id === 5 &&
+                          restAdminStats.menu.stop_count > 0 &&
+                          showBadge({
                             indicatorColor: "#c92a2a",
                             bgColor: "#fff5f5",
                             badgeContent: `стоп ${restAdminStats.menu.stop_count}`,
-                            contentColor: "#c92a2a"
-                        })
-                      ) : null
+                            contentColor: "#c92a2a",
+                          })
+                        : null
                     }
                   />
                 ))}
@@ -212,7 +235,7 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
                   label={link.label}
                   icon={link.icon}
                   collapsed={collapsed}
-                  />
+                />
               ))
             )}
           </Stack>
@@ -222,62 +245,59 @@ export const Sidebar = ({ collapsed }: SidebarProps) => {
       {collapsed ? (
         <Stack align="center">
           <Avatar
-              onClick={openChangeModal}
-              color="teal.8"
-              className="cursor-pointer"
-            >
-              <Text c={"white"} size="sm" fw={600}>
-                {user?.first_name.charAt(0).toUpperCase()}
-                {user?.last_name.charAt(0).toUpperCase()}
-              </Text>
+            onClick={openChangeModal}
+            color="teal.8"
+            className="cursor-pointer"
+          >
+            <Text c={"white"} size="sm" fw={600}>
+              {user?.first_name.charAt(0).toUpperCase()}
+              {user?.last_name.charAt(0).toUpperCase()}
+            </Text>
           </Avatar>
 
           <LogoutButton />
         </Stack>
       ) : (
         <Group
-            justify="space-between"
-            className="border-t border-[#E9ECEF] rounded-lg"
-          >
-            <Box onClick={openChangeModal}>
-              <ProfileButton user={user} />
-            </Box>
+          justify="space-between"
+          className="border-t border-[#E9ECEF] rounded-lg"
+        >
+          <Box onClick={openChangeModal}>
+            <ProfileButton user={user} />
+          </Box>
 
-            <LogoutButton />
+          <LogoutButton />
         </Group>
       )}
 
       <ChangeModal
         title="Профиль"
-          opened={changeModalOpened}
-          closeModal={closeChangeModal}
-          content={
-            <ScrollArea>
-              {user && (
-                <ChangeUserDetailForm
-                  onSave={closeChangeModal}
-                  defaultData={user}
-                />
-              )}
+        opened={changeModalOpened}
+        closeModal={closeChangeModal}
+        content={
+          <ScrollArea>
+            {user && (
+              <ChangeUserDetailForm
+                onSave={closeChangeModal}
+                defaultData={user}
+              />
+            )}
 
-              <ChangePasswordForm onSave={closeChangeModal} />
+            <ChangePasswordForm onSave={closeChangeModal} />
 
-              <Group
-                bg={"#f8f9fa"}
-                gap={12}
-                py={16}
-                px={24}
-                className="border-t border-[#e9ecef]"
-              >
-                <Group justify="space-between" w={"100%"}>
-                  <LogoutButton logoutWithText />
-                  <CancelButton
-                    children="Закрыть"
-                    onCancel={closeChangeModal}
-                  />
-                </Group>
+            <Group
+              bg={"#f8f9fa"}
+              gap={12}
+              py={16}
+              px={24}
+              className="border-t border-[#e9ecef]"
+            >
+              <Group justify="space-between" w={"100%"}>
+                <LogoutButton logoutWithText />
+                <CancelButton children="Закрыть" onCancel={closeChangeModal} />
               </Group>
-            </ScrollArea>
+            </Group>
+          </ScrollArea>
         }
       />
     </Stack>

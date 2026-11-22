@@ -1,1 +1,1 @@
-export type { CommonGetResponse } from './types'
+export type { PaginatedResponse } from "./types";

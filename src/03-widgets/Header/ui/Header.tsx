@@ -1,4 +1,3 @@
-import { LogoutButton } from "@/04-features/auth";
 import { useMe } from "@/05-entities/user";
 import { ProfileButton } from "@/06-shared/ui/ProfileButton";
 import { Group } from "@mantine/core";
@@ -29,7 +28,7 @@ export const Header = ({ tabs, logoName } : HeaderProps) => {
           </Group>
         </Group>
 
-        <ProfileButton user={user} rightSection={<LogoutButton />} />
+        <ProfileButton user={user} />
       </Group>
     </header>
   );
